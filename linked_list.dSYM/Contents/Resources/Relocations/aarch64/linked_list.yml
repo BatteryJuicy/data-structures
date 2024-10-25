@@ -2,10 +2,10 @@
 triple:          'arm64-apple-darwin'
 binary-path:     '/Users/andreas/Desktop/data-structures/linked_list'
 relocations:
-  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100003C50, symSize: 0xBC }
-  - { offsetInCU: 0x7E, offset: 0x7E, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100003C50, symSize: 0xBC }
-  - { offsetInCU: 0xFA, offset: 0xFA, size: 0x8, addend: 0x0, symName: _addAt, symObjAddr: 0xBC, symBinAddr: 0x100003D0C, symSize: 0x7C }
-  - { offsetInCU: 0x13A, offset: 0x13A, size: 0x8, addend: 0x0, symName: _create_empty_list, symObjAddr: 0x138, symBinAddr: 0x100003D88, symSize: 0x58 }
-  - { offsetInCU: 0x162, offset: 0x162, size: 0x8, addend: 0x0, symName: _delete, symObjAddr: 0x190, symBinAddr: 0x100003DE0, symSize: 0xC8 }
-  - { offsetInCU: 0x1B0, offset: 0x1B0, size: 0x8, addend: 0x0, symName: _search, symObjAddr: 0x258, symBinAddr: 0x100003EA8, symSize: 0x98 }
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100003C40, symSize: 0xC0 }
+  - { offsetInCU: 0x7E, offset: 0x7E, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100003C40, symSize: 0xC0 }
+  - { offsetInCU: 0xFA, offset: 0xFA, size: 0x8, addend: 0x0, symName: _addAt, symObjAddr: 0xC0, symBinAddr: 0x100003D00, symSize: 0x7C }
+  - { offsetInCU: 0x13A, offset: 0x13A, size: 0x8, addend: 0x0, symName: _create_empty_list, symObjAddr: 0x13C, symBinAddr: 0x100003D7C, symSize: 0x64 }
+  - { offsetInCU: 0x162, offset: 0x162, size: 0x8, addend: 0x0, symName: _delete, symObjAddr: 0x1A0, symBinAddr: 0x100003DE0, symSize: 0xC8 }
+  - { offsetInCU: 0x1B0, offset: 0x1B0, size: 0x8, addend: 0x0, symName: _search, symObjAddr: 0x268, symBinAddr: 0x100003EA8, symSize: 0x98 }
 ...

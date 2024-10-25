@@ -19,7 +19,7 @@ int main(int argc, char **argv)
     {
         addAt(head, i);
     }
-    for (Node* pos = 0; pos; pos++)
+    for (Node* pos = head->next; pos; pos= pos->next)
     {
         printf("%d\n", pos->data);
     }
