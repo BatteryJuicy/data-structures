@@ -4,69 +4,76 @@
 typedef struct list{
     int data;
     struct list *next;
-}cell;
+}Node;
 
-void add(cell*, int);
-void remove_number(cell*, int);
-void remove_index(cell*, int);
+Node* create_empty_list();
+void addAt(Node*, int);
+void delete(Node*, int);
+Node* search(Node*, int);
 
 int main(int argc, char **argv)
 {
-    cell head = {0};
+    Node* head = create_empty_list();
 
-    cell* index = &head;
-    for (int i = 1; i < 10; i++)
+    for (int i = 0; i < 10; i++)
     {
-        add(index, i);
-        index = index->next;
+        addAt(head, i);
     }
-    printf("A\n");
-    for (cell* pos = head.next; pos; pos = pos->next)
+    for (Node* pos = 0; pos; pos++)
     {
-        printf("%d ", pos->data);
+        printf("%d\n", pos->data);
     }
-    printf("\nB\n");
-    remove_number(&head, 4);
-    printf("C\n");
-    for (cell* pos = head.next; pos; pos = pos->next)
-    {
-        printf("%d ", pos->data);
-    }
-    printf("D\n");
-    for (cell* pos = head.next; pos; pos = pos->next)
-    {
-        free(pos);
-    }
-    printf("E\n");
+    
+    return 0;
 }
 
-void add(cell* prev_cell, int new_data)
+Node* create_empty_list()
 {
-    cell* new_cell = (cell*) malloc(sizeof(cell));
-    if(new_cell == NULL)
-    {
-        printf("cannot allocate memory");
+    Node *head = (Node*) malloc(sizeof(Node));
+    if( head == NULL){
+        printf("cannot allocate node.");
         exit(1);
     }
-    new_cell->data = new_data;
-    new_cell->next = prev_cell->next;
-    prev_cell->next = new_cell;
+    head->next = NULL;
+    return head;
 }
 
-void remove_number(cell* list, int number)
+void addAt(Node* pos, int data)
 {
-    for (cell* p = list; p; p = p->next)
-    {
-        cell *temp = p;
-        if ((p->next)->data == number)
-        {
-            p->next = p->next->next;
-            free(temp->next);
-        }
+    Node *new_node = (Node*) malloc(sizeof(Node));
+    if (new_node == NULL){
+        printf("cannot allocate cell");
+        exit(1);
     }
+    new_node->next = pos->next;
+    pos->next = new_node;
+    new_node->data = data;
 }
 
-void remove_index(cell* list, int index)
+void delete(Node* head, int x)
 {
+    Node* prev = NULL;
+    Node* index = head;
 
+    while(index != NULL && index->data != x)
+    {
+        prev = index;
+        index = index->next;
+    }
+
+    if (index == NULL) exit(2);
+    prev->next = index->next;
+
+    free(index);
+    free(prev);
+}
+
+Node* search(Node* head, int x)
+{
+    while(head != NULL && head->data != x)
+    {
+        head = head->next;
+    }
+    if (head == NULL) return NULL;
+    return head;
 }
