@@ -15,9 +15,11 @@ int main(int argc, char **argv)
 {
     Node* head = create_empty_list();
 
+    Node* temp = head;
     for (int i = 0; i < 10; i++)
     {
-        addAt(head, i);
+        temp = temp->next;
+        addAt(temp, i+1);
     }
     for (Node* pos = head->next; pos; pos= pos->next)
     {
