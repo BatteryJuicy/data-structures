@@ -7,21 +7,19 @@ typedef struct list{
 }Node;
 
 Node* create_empty_list();
-void addAt(Node*, int);
+void insert(Node**, int, int);
 void delete(Node*, int);
 Node* search(Node*, int);
 
-int main(int argc, char **argv)
+int main()
 {
-    Node* head = create_empty_list();
+    Node* head = NULL;
 
-    Node* temp = head;
     for (int i = 0; i < 10; i++)
     {
-        temp = temp->next;
-        addAt(temp, i+1);
+        insert(&head, i, i%2);
     }
-    for (Node* pos = head->next; pos; pos= pos->next)
+    for (Node* pos = head; pos; pos = pos->next)
     {
         printf("%d\n", pos->data);
     }
@@ -29,27 +27,33 @@ int main(int argc, char **argv)
     return 0;
 }
 
-Node* create_empty_list()
-{
-    Node *head = (Node*) malloc(sizeof(Node));
-    if( head == NULL){
-        printf("cannot allocate node.");
-        exit(1);
-    }
-    head->next = NULL;
-    return head;
-}
-
-void addAt(Node* pos, int data)
+void insert(Node** headptr, int i, int data)
 {
     Node *new_node = (Node*) malloc(sizeof(Node));
     if (new_node == NULL){
         printf("cannot allocate cell");
         exit(1);
     }
-    new_node->next = pos->next;
-    pos->next = new_node;
     new_node->data = data;
+
+    int index = 0;
+    Node* prevp = NULL;
+    Node* p = *headptr;
+    while(p && index < i)
+    {
+        prevp = p;
+        p = p->next;
+        index++;
+    }
+    
+    if (index == 0)
+    {
+        new_node->next = *headptr;
+        *headptr = new_node;
+        return;
+    }
+    new_node->next = prevp->next;
+    prevp->next = new_node;
 }
 
 void delete(Node* head, int x)
