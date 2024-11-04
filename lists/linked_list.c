@@ -6,15 +6,23 @@ typedef struct list{
     struct list *next;
 }Node;
 
-Node* create_empty_list();
+//insert node before a given INDEX.
 void insert(Node**, int, int);
-void delete(Node*, int);
+//delete node with a certain VALUE.
+void delete(Node**, int);
+//return POINTER to a node with a certain VALUE.
 Node* search(Node*, int);
+//return the VALUE of the node at some INDEX.
 int access(Node*, int);
+//returns the number of nodes.
 int list_length(Node*);
+//prints the contents of the list.
 void print_list(Node*);
 
+//----hy240 functions----
+//inserts node with a given value before the node with the sought after value.
 void insert_before_key(Node**, int, int);
+//deletes a node at a ceratin INDEX.
 void Remove(Node**, int);
 
 int main()
@@ -50,6 +58,7 @@ int main()
 
 void insert(Node** headptr, int i, int data)
 {
+    //creating new node and making sure it got allocated.
     Node *new_node = (Node*) malloc(sizeof(Node));
     if (new_node == NULL){
         printf("cannot allocate cell");
@@ -57,6 +66,7 @@ void insert(Node** headptr, int i, int data)
     }
     new_node->data = data;
 
+    //iterating the linked list until the node at index i is found.
     int index = 0;
     Node* prevp = NULL;
     Node* p = *headptr;
@@ -67,32 +77,45 @@ void insert(Node** headptr, int i, int data)
         index++;
     }
     
+    //if list is empty or we need to add a node at the start of the list.
     if (index == 0)
     {
         new_node->next = *headptr;
         *headptr = new_node;
         return;
     }
+
+    //otherwise if the node is in the middle or at the end.
     new_node->next = prevp->next;
     prevp->next = new_node;
 }
 
-void delete(Node* head, int x)
+void delete(Node** head, int x)
 {
-    Node* prev = NULL;
-    Node* index = head;
+    Node* prevp = NULL;
+    Node* p = *head;
 
-    while(index != NULL && index->data != x)
+    while(p != NULL && p->data != x)
     {
-        prev = index;
-        index = index->next;
+        prevp = p;
+        p = p->next;
     }
 
-    if (index == NULL) exit(2);
-    prev->next = index->next;
+    if (p == NULL) 
+    exit(2);
 
-    free(index);
-    free(prev);
+    if (prevp == NULL)
+    {
+        *head =  p->next;
+        free(p);
+        return;
+    }
+    
+    //otherwise if the node to be deleted is not first.
+    prevp->next = p->next;
+
+    free(p);
+    free(prevp);
 }
 
 Node* search(Node* head, int x)
@@ -101,7 +124,9 @@ Node* search(Node* head, int x)
     {
         head = head->next;
     }
-    if (head == NULL) return NULL;
+    if (head == NULL) 
+        return NULL;
+
     return head;
 }
 
@@ -132,7 +157,7 @@ void print_list(Node* head)
 {
     for (int i = 0; i < list_length(head); i++)
     {
-        printf("the %dth element is: %d\n", i+1, access(head, i));
+        printf("element at index %d: %d\n", i, access(head, i));
     }
 }
 
