@@ -1,3 +1,5 @@
+#ifndef __LINKED_LIST_H__
+#define __LINKED_LIST_H__
 
 typedef struct list{
     int data;
@@ -22,3 +24,4 @@ void print_list(Node*);
 void insert_before_key(Node**, int, int);
 //deletes a node at a ceratin INDEX.
 void Remove(Node**, int);
+#endif

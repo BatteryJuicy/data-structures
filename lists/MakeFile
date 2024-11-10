@@ -1,0 +1,11 @@
+all: dlist
+
+linked_list: linked_list.c linked_list.h
+	gcc -Wall -g $< -o $@
+
+dlist: doubly_linked_list.c dlist.out
+	gcc -Wall -g doubly_linked_list.c -o dlist
+
+clean:
+	rm -f linked_list
+	rm -f dlist
