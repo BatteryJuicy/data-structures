@@ -1,11 +1,12 @@
 CC=gcc
-CFLAGS=-Wall -g
+CFLAGS=-g
 
-all: clean object_files cs240Elections run
+all: clean object_files cs240Elections
 
 cs240Elections: main.o elections.o
 	@echo 5. linking and creating cs240Elections...
-	@$(CC) $(CFLAGS) $< -o $@
+	@$(CC) $(CFLAGS) main.o elections.o -o cs240Elections
+	@echo DONE
 
 object_files: main.c elections.c
 	@echo 3. making elections.o...
@@ -13,9 +14,15 @@ object_files: main.c elections.c
 	@echo 4. making main.o...
 	@$(CC) $(CFLAGS) -c main.c -o main.o
 
-run: cs240Elections
-	@echo 6. running cs240Elections
-	@./cs240Elections
+run1: cs240Elections
+	@echo 61. running cs240Elections
+	@./cs240Elections ../testfiles/small
+run2: cs240Elections
+	@echo 61. running cs240Elections
+	@./cs240Elections ../testfiles/medium
+run3: cs240Elections
+	@echo 61. running cs240Elections
+	@./cs240Elections ../testfiles/large
 
 .PHONY: clean
 

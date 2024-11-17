@@ -117,88 +117,90 @@ int main(int argc, char *argv[])
 				}
 				ret = create_station(sid, did);
 				break;
-			case 'P':
-				if (sscanf(trimmed_line, "P %d", &pid) != 1) {
-					fprintf(stderr, "Event P parsing error\n");
-					ret = 1;
-					break;
-				}
-				create_party(pid);
-				break;
-			case 'C':
-				if (sscanf(trimmed_line, "C %d %d %d", &cid, &did, &pid) != 3) {
-					fprintf(stderr, "Event C parsing error\n");
-					ret = 1;
-					break;
-				}
-				ret = register_candidate(cid, did, pid);
-				break;
-			case 'R':
-				if (sscanf(trimmed_line, "R %d %d %d", &vid, &did, &sid) != 3) {
-					fprintf(stderr, "Event R parsing error\n");
-					ret = 1;
-					break;
-				}
-				ret = register_voter(vid, did, sid);
-				break;
-			case 'U':
-				if (sscanf(trimmed_line, "U %d", &vid) != 1) {
-					fprintf(stderr, "Event U parsing error\n");
-					ret = 1;
-					break;
-				}
-				ret = unregister_voter(vid);
-				break;
-			case 'E':
-				delete_empty_stations();
-				break;
-			case 'V':
-				if (sscanf(trimmed_line, "V %d %d %d", &vid, &sid, &cid) != 3) {
-					fprintf(stderr, "Event V parsing error\n");
-					ret = 1;
-					break;
-				}
-				ret = vote(vid, sid, cid);
-				break;
-			case 'M':
-				if (sscanf(trimmed_line, "M %d", &did) != 1) {
-					fprintf(stderr, "Event M parsing error\n");
-					ret = 1;
-					break;
-				}
-				count_votes(did);
-			case 'G':
-				form_government();
-				break;
-			case 'N':
-				form_parliament();
-				break;
-			case 'I':
-				if (sscanf(trimmed_line, "I %d", &did) != 1) {
-					fprintf(stderr, "Event I parsing error\n");
-					ret = 1;
-					break;
-				}
-				print_district(did);
-			case 'J':
-				if (sscanf(trimmed_line, "J %d %d", &sid, &did) != 2) {
-					fprintf(stderr, "Event J parsing error\n");
-					ret = 1;
-					break;
-				}
-				print_station(sid, did);
-				break;
-			case 'K':
-				if (sscanf(trimmed_line, "K %d", &pid) != 1) {
-					fprintf(stderr, "Event I parsing error\n");
-					ret = 1;
-					break;
-				}
-				print_party(pid);
-				break;
-			case 'L':
-				print_parliament();
-				break;
+			// case 'P':
+			// 	if (sscanf(trimmed_line, "P %d", &pid) != 1) {
+			// 		fprintf(stderr, "Event P parsing error\n");
+			// 		ret = 1;
+			// 		break;
+			// 	}
+			// 	create_party(pid);
+			// 	break;
+			// case 'C':
+			// 	if (sscanf(trimmed_line, "C %d %d %d", &cid, &did, &pid) != 3) {
+			// 		fprintf(stderr, "Event C parsing error\n");
+			// 		ret = 1;
+			// 		break;
+			// 	}
+			// 	ret = register_candidate(cid, did, pid);
+			// 	break;
+			// case 'R':
+			// 	if (sscanf(trimmed_line, "R %d %d %d", &vid, &did, &sid) != 3) {
+			// 		fprintf(stderr, "Event R parsing error\n");
+			// 		ret = 1;
+			// 		break;
+			// 	}
+			// 	ret = register_voter(vid, did, sid);
+			// 	break;
+			// case 'U':
+			// 	if (sscanf(trimmed_line, "U %d", &vid) != 1) {
+			// 		fprintf(stderr, "Event U parsing error\n");
+			// 		ret = 1;
+			// 		break;
+			// 	}
+			// 	ret = unregister_voter(vid);
+			// 	break;
+			// case 'E':
+			// 	delete_empty_stations();
+			// 	break;
+			// case 'V':
+			// 	if (sscanf(trimmed_line, "V %d %d %d", &vid, &sid, &cid) != 3) {
+			// 		fprintf(stderr, "Event V parsing error\n");
+			// 		ret = 1;
+			// 		break;
+			// 	}
+			// 	ret = vote(vid, sid, cid);
+			// 	break;
+			// case 'M':
+			// 	if (sscanf(trimmed_line, "M %d", &did) != 1) {
+			// 		fprintf(stderr, "Event M parsing error\n");
+			// 		ret = 1;
+			// 		break;
+			// 	}
+			// 	count_votes(did);
+			// 	break;
+			// case 'G':
+			// 	form_government();
+			// 	break;
+			// case 'N':
+			// 	form_parliament();
+			// 	break;
+			// case 'I':
+			// 	if (sscanf(trimmed_line, "I %d", &did) != 1) {
+			// 		fprintf(stderr, "Event I parsing error\n");
+			// 		ret = 1;
+			// 		break;
+			// 	}
+			// 	print_district(did);
+			// 	break;
+			// case 'J':
+			// 	if (sscanf(trimmed_line, "J %d %d", &sid, &did) != 2) {
+			// 		fprintf(stderr, "Event J parsing error\n");
+			// 		ret = 1;
+			// 		break;
+			// 	}
+			// 	print_station(sid, did);
+			// 	break;
+			// case 'K':
+			// 	if (sscanf(trimmed_line, "K %d", &pid) != 1) {
+			// 		fprintf(stderr, "Event I parsing error\n");
+			// 		ret = 1;
+			// 		break;
+			// 	}
+			// 	print_party(pid);
+			// 	break;
+			// case 'L':
+			// 	print_parliament();
+			// 	break;
 			default:
 				fprintf(stderr, "WARNING: Unrecognized event %c. Continuing...\n",
 						event);
