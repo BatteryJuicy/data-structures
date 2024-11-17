@@ -117,14 +117,14 @@ int main(int argc, char *argv[])
 				}
 				ret = create_station(sid, did);
 				break;
-			// case 'P':
-			// 	if (sscanf(trimmed_line, "P %d", &pid) != 1) {
-			// 		fprintf(stderr, "Event P parsing error\n");
-			// 		ret = 1;
-			// 		break;
-			// 	}
-			// 	create_party(pid);
-			// 	break;
+			case 'P':
+				if (sscanf(trimmed_line, "P %d", &pid) != 1) {
+					fprintf(stderr, "Event P parsing error\n");
+					ret = 1;
+					break;
+				}
+				create_party(pid);
+				break;
 			// case 'C':
 			// 	if (sscanf(trimmed_line, "C %d %d %d", &cid, &did, &pid) != 3) {
 			// 		fprintf(stderr, "Event C parsing error\n");

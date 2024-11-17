@@ -8,6 +8,7 @@ extern struct district Districts[56];
 extern struct party Parties[5];
 extern struct parliament Parliament;
 
+//EVENT A
 void announce_elections()
 {
     for (int i = 0; i < 56; i++)
@@ -32,6 +33,7 @@ void announce_elections()
 
 }
 
+//EVENT D
 int create_district(int did, int seats)
 {
     static int index = 0;
@@ -76,6 +78,7 @@ void add_station(struct district *d, struct station *s)
 
 }
 
+//EVENT S
 int create_station(int sid, int did)
 {
     int district_index = -1;
@@ -120,10 +123,22 @@ int create_station(int sid, int did)
     return 0;
 }
 
-// void create_party(int pid)
-// {
+//EVENT P
+void create_party(int pid)
+{
+    static int party_index = 0;
 
-// }
+    Parties[party_index].pid = pid;
+    party_index++;
+
+    printf("P %d\n", pid);
+    printf("Parties =");
+    for (int i = 0; i < party_index; i++)
+    {
+        printf(" %d ", Parties[i].pid);
+    }
+    printf("\nDONE\n");
+}
 
 // int register_candidate(int cid, int did, int pid)
 // {
