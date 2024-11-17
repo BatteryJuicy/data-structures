@@ -64,7 +64,7 @@ void add_station(struct district *d, struct station *s)
         p = p->next;
     }
     
-    //if list is empty or we need to add a node at the start of the list.
+    //if list is empty.
     if (prevp == NULL)
     {
         s->next = d->stations;
@@ -78,22 +78,29 @@ void add_station(struct district *d, struct station *s)
 
 }
 
-//EVENT S
-int create_station(int sid, int did)
+//helper function to find the wanted district with did.
+int find_district(int did)
 {
-    int district_index = -1;
+    int index = -1;
 
     for (int i = 0; i < 56; i++)
     {
         if (Districts[i].did == did){
-            district_index = i;
+            index = i;
             break;
         }
     }
-    if (district_index == -1){
+    if (index == -1){
         printf("district with did %d was not found\n", did);
         exit(1);
     }
+    return index;
+}
+
+//EVENT S
+int create_station(int sid, int did)
+{
+    int district_index = find_district(did);
 
     //creating the station.
     struct station *s = (struct station*) malloc(sizeof(struct station));
@@ -140,10 +147,59 @@ void create_party(int pid)
     printf("\nDONE\n");
 }
 
-// int register_candidate(int cid, int did, int pid)
-// {
+//helper function for event C.
+void add_candidate(struct district *d, struct candidate *c)
+{
+    struct candidate* prevp = NULL;
+    struct candidate* p = d->candidates;
+    while(p != NULL)
+    {
+        prevp = p;
+        p = p->next;
+    }
+    
+    //if list is empty.
+    if (prevp == NULL)
+    {
+        c->next = NULL;
+        d->candidates = c;
+        c->prev = NULL;
+        return;
+    }
 
-// }
+    //otherwise if the candidate is at the end.
+    c->next = NULL;
+    prevp->next = c;
+    c->prev = prevp;    
+}
+
+//EVENT C
+int register_candidate(int cid, int did, int pid)
+{
+    int district_index = find_district(did);
+
+    struct candidate *c = (struct candidate*) malloc(sizeof(struct candidate));
+    if (c == NULL){
+        printf("couldn't add candidate with CID %d from the party with PID %d at the district with DID %d", cid, did, pid);
+        exit(1);
+    }
+    c->cid = cid;
+    c->pid = pid;
+    c->votes = 0;
+    c->elected = 0;
+    
+    add_candidate(&Districts[district_index], c);
+
+    printf("C %d %d %d\n", cid, did, pid);
+    printf("Candidates =");
+    for (struct candidate *p = Districts[district_index].candidates; p; p = p->next)
+    {
+        printf(" %d ", p->cid);
+    }
+    printf("\nDONE\n");
+
+    return 0;
+}
 
 // int register_voter(int vid, int did, int sid)
 // {

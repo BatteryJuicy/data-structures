@@ -125,14 +125,14 @@ int main(int argc, char *argv[])
 				}
 				create_party(pid);
 				break;
-			// case 'C':
-			// 	if (sscanf(trimmed_line, "C %d %d %d", &cid, &did, &pid) != 3) {
-			// 		fprintf(stderr, "Event C parsing error\n");
-			// 		ret = 1;
-			// 		break;
-			// 	}
-			// 	ret = register_candidate(cid, did, pid);
-			// 	break;
+			case 'C':
+				if (sscanf(trimmed_line, "C %d %d %d", &cid, &did, &pid) != 3) {
+					fprintf(stderr, "Event C parsing error\n");
+					ret = 1;
+					break;
+				}
+				ret = register_candidate(cid, did, pid);
+				break;
 			// case 'R':
 			// 	if (sscanf(trimmed_line, "R %d %d %d", &vid, &did, &sid) != 3) {
 			// 		fprintf(stderr, "Event R parsing error\n");
