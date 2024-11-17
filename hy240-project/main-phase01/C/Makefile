@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-g
 
-all: clean object_files cs240Elections
+all: cleanAll object_files cs240Elections clean
 
 cs240Elections: main.o elections.o
 	@echo 5. linking and creating cs240Elections...
@@ -13,21 +13,26 @@ object_files: main.c elections.c
 	@$(CC) $(CFLAGS) -c elections.c -o elections.o
 	@echo 4. making main.o...
 	@$(CC) $(CFLAGS) -c main.c -o main.o
+	@echo COMPILED
 
 run1: cs240Elections
-	@echo 61. running cs240Elections
+	@echo A. running cs240Elections with input small...
 	@./cs240Elections ../testfiles/small
 run2: cs240Elections
-	@echo 61. running cs240Elections
+	@echo B. running cs240Elections with input medium...
 	@./cs240Elections ../testfiles/medium
 run3: cs240Elections
-	@echo 61. running cs240Elections
+	@echo C. running cs240Elections with input large...
 	@./cs240Elections ../testfiles/large
 
 .PHONY: clean
 
-clean:
-	@echo 1. clearing object files
+cleanAll:
+	@echo 1. clearing object files...
 	@rm -f main.o elections.o
-	@echo 2. deleting cs240Elections
+	@echo 2. deleting cs240Elections...
 	@rm -f cs240Elections
+
+clean:
+	@echo 6. clearing object files...
+	@rm -f main.o elections.o
