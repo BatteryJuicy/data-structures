@@ -305,7 +305,7 @@ int unregister_voter(int vid)
             }
             if (v != s->vsentinel){
                 remove_voter(s, prev);
-
+                s->registered--;
                 printf("U %d\n", vid);
                 printf("    %d %d\n", Districts[i].did, s->sid);
                 printf("    Voters =");
@@ -324,6 +324,7 @@ int unregister_voter(int vid)
     return 1;
 }
 
+//EVENT E
 // int vote(int vid, int sid, int cid)
 // {
 
