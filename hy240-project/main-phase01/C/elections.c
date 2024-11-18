@@ -324,7 +324,44 @@ int unregister_voter(int vid)
     return 1;
 }
 
+//helper function to remove station.
+void remove_station(struct district *d, struct station *prevs)
+{
+    struct station *temp;
+
+    //remove first element.
+    if (prevs == NULL)
+    {
+        temp = d->stations;
+        d->stations = d->stations->next;
+        free(temp);
+        return;
+    }
+
+    temp = prevs->next;
+    prevs->next = prevs->next->next;
+    free(temp);
+}
+
 //EVENT E
+void delete_empty_stations(void)
+{
+    printf("E\n");
+    for (int i = 0; i < 56; i++)
+    {
+        struct station *prev = NULL;
+
+        for (struct station *s = Districts[i].stations; s; prev = s, s = s->next)
+        {
+            if (s->voters == s->vsentinel){
+                printf("    %d %d\n", s->sid, Districts[i].did);
+                remove_station(&Districts[i], prev);
+            }
+        }
+    }
+    printf("DONE\n");
+}
+
 // int vote(int vid, int sid, int cid)
 // {
 

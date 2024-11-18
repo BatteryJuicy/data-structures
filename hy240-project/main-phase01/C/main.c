@@ -149,9 +149,9 @@ int main(int argc, char *argv[])
 				}
 				ret = unregister_voter(vid);
 				break;
-			// case 'E':
-			// 	delete_empty_stations();
-			// 	break;
+			case 'E':
+				delete_empty_stations();
+				break;
 			// case 'V':
 			// 	if (sscanf(trimmed_line, "V %d %d %d", &vid, &sid, &cid) != 3) {
 			// 		fprintf(stderr, "Event V parsing error\n");
