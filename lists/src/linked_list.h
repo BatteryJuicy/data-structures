@@ -6,7 +6,9 @@ typedef struct list{
     struct list *next;
 }Node;
 
-//insert node before a given INDEX.
+/*insert node before a given INDEX.
+    insert(Node** headptr, int index, int data);
+*/
 void insert(Node**, int, int);
 //delete node with a certain VALUE.
 void delete(Node**, int);

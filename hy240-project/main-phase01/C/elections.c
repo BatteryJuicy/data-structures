@@ -43,7 +43,7 @@ int create_district(int did, int seats)
     Districts[index].allotted = 0;
     index++;
     printf("D %d %d\n", did, seats);
-    printf("Districts =");
+    printf("    Districts =");
     for (int i = 0; i < index; i++)
     {
         printf(" %d ", Districts[i].did);
@@ -120,7 +120,7 @@ int create_station(int sid, int did)
     add_station(&Districts[district_index], s);
 
     printf("S %d %d\n", sid, did);
-    printf("Sations =");
+    printf("    Sations =");
     for (struct station *p = Districts[district_index].stations; p; p = p->next)
     {
         printf(" %d ", p->sid);
@@ -139,7 +139,7 @@ void create_party(int pid)
     party_index++;
 
     printf("P %d\n", pid);
-    printf("Parties =");
+    printf("    Parties =");
     for (int i = 0; i < party_index; i++)
     {
         printf(" %d ", Parties[i].pid);
@@ -195,7 +195,7 @@ int register_candidate(int cid, int did, int pid)
     add_candidate(&Districts[district_index], c);
 
     printf("C %d %d %d\n", cid, did, pid);
-    printf("Candidates =");
+    printf("    Candidates =");
     for (struct candidate *p = Districts[district_index].candidates; p; p = p->next)
     {
         printf(" %d ", p->cid);
@@ -263,7 +263,7 @@ int register_voter(int vid, int did, int sid)
     s->registered++;
 
     printf("R %d %d %d\n", vid, did, sid);
-    printf("Voters =");
+    printf("    Voters =");
     for (struct voter *p = s->voters; p != s->vsentinel; p = p->next)
     {
         printf(" %d ", p->vid);
@@ -273,10 +273,56 @@ int register_voter(int vid, int did, int sid)
     return 0;
 }
 
-// int unregister_voter(int vid)
-// {
+//helper function to remove voter for event u.
+void remove_voter(struct station *s, struct voter *prev)
+{
+    //remove first voter.
+    if (prev == NULL){
+        struct voter *temp = s->voters;
+        s->voters = temp->next;
+        free(temp);
+        return;
+    }
 
-// }
+    struct voter *temp = prev->next;
+    prev->next = prev->next->next;
+    free(temp);
+}
+
+//EVENT U
+int unregister_voter(int vid)
+{
+    for (int i = 0; i < 56; i++)
+    {
+        for (struct station *s = Districts[i].stations; s; s = s->next)
+        {
+            s->vsentinel->vid = vid; //setting the sentinel node data to the sought after data.
+            struct voter *prev = NULL;
+            struct voter *v = s->voters;
+            while (v->vid != vid){
+                prev = v;
+                v = v->next;
+            }
+            if (v != s->vsentinel){
+                remove_voter(s, prev);
+
+                printf("U %d\n", vid);
+                printf("    %d %d\n", Districts[i].did, s->sid);
+                printf("    Voters =");
+                for (struct voter *p = s->voters; p != s->vsentinel; p = p->next)
+                {
+                    printf(" %d ", p->vid);
+                }
+                printf("\nDONE\n");
+
+                return 0;
+            }
+        }
+        
+    }
+    printf("couldn't find voter with VID %d\n", vid);
+    return 1;
+}
 
 // int vote(int vid, int sid, int cid)
 // {

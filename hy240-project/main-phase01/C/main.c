@@ -141,14 +141,14 @@ int main(int argc, char *argv[])
 				}
 				ret = register_voter(vid, did, sid);
 				break;
-			// case 'U':
-			// 	if (sscanf(trimmed_line, "U %d", &vid) != 1) {
-			// 		fprintf(stderr, "Event U parsing error\n");
-			// 		ret = 1;
-			// 		break;
-			// 	}
-			// 	ret = unregister_voter(vid);
-			// 	break;
+			case 'U':
+				if (sscanf(trimmed_line, "U %d", &vid) != 1) {
+					fprintf(stderr, "Event U parsing error\n");
+					ret = 1;
+					break;
+				}
+				ret = unregister_voter(vid);
+				break;
 			// case 'E':
 			// 	delete_empty_stations();
 			// 	break;

@@ -52,7 +52,7 @@ void delete(Node** head, int x)
     }
 
     if (p == NULL) 
-    exit(2);
+        exit(2);
 
     if (prevp == NULL)
     {
@@ -65,7 +65,6 @@ void delete(Node** head, int x)
     prevp->next = p->next;
 
     free(p);
-    free(prevp);
 }
 
 Node* search(Node* head, int x)
