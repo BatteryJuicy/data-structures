@@ -133,14 +133,14 @@ int main(int argc, char *argv[])
 				}
 				ret = register_candidate(cid, did, pid);
 				break;
-			// case 'R':
-			// 	if (sscanf(trimmed_line, "R %d %d %d", &vid, &did, &sid) != 3) {
-			// 		fprintf(stderr, "Event R parsing error\n");
-			// 		ret = 1;
-			// 		break;
-			// 	}
-			// 	ret = register_voter(vid, did, sid);
-			// 	break;
+			case 'R':
+				if (sscanf(trimmed_line, "R %d %d %d", &vid, &did, &sid) != 3) {
+					fprintf(stderr, "Event R parsing error\n");
+					ret = 1;
+					break;
+				}
+				ret = register_voter(vid, did, sid);
+				break;
 			// case 'U':
 			// 	if (sscanf(trimmed_line, "U %d", &vid) != 1) {
 			// 		fprintf(stderr, "Event U parsing error\n");

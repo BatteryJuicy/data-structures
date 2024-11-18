@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-g
+CFLAGS= -Wall -g
 
 all: cleanAll object_files cs240Elections clean
 
@@ -18,12 +18,20 @@ object_files: main.c elections.c
 run1: cs240Elections
 	@echo A. running cs240Elections with input small...
 	@./cs240Elections ../testfiles/small
+	@echo 6. clearing object files...
+	@rm -f main.o elections.o
+
 run2: cs240Elections
 	@echo B. running cs240Elections with input medium...
 	@./cs240Elections ../testfiles/medium
+	@echo 6. clearing object files...
+	@rm -f main.o elections.o
+
 run3: cs240Elections
 	@echo C. running cs240Elections with input large...
 	@./cs240Elections ../testfiles/large
+	@echo 6. clearing object files...
+	@rm -f main.o elections.o
 
 .PHONY: clean
 

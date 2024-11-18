@@ -53,7 +53,26 @@ int create_district(int did, int seats)
     return 0;
 }
 
-//helper function for event S to make the code easier to read.
+//helper function to find the wanted district with did.
+int find_district(int did)
+{
+    int index = -1;
+
+    for (int i = 0; i < 56; i++)
+    {
+        if (Districts[i].did == did){
+            index = i;
+            break;
+        }
+    }
+    if (index == -1){
+        printf("district with did %d was not found\n", did);
+        exit(1);
+    }
+    return index;
+}
+
+//helper function for event S to add the already initialized station s to the district stations list.
 void add_station(struct district *d, struct station *s)
 {
     struct station* prevp = NULL;
@@ -78,25 +97,6 @@ void add_station(struct district *d, struct station *s)
 
 }
 
-//helper function to find the wanted district with did.
-int find_district(int did)
-{
-    int index = -1;
-
-    for (int i = 0; i < 56; i++)
-    {
-        if (Districts[i].did == did){
-            index = i;
-            break;
-        }
-    }
-    if (index == -1){
-        printf("district with did %d was not found\n", did);
-        exit(1);
-    }
-    return index;
-}
-
 //EVENT S
 int create_station(int sid, int did)
 {
@@ -105,13 +105,13 @@ int create_station(int sid, int did)
     //creating the station.
     struct station *s = (struct station*) malloc(sizeof(struct station));
     if (s == NULL){
-        printf("couldn't allocate station\n");
+        printf("couldn't allocate station with SID %d at district with DID %d\n", sid, did);
         exit(1);
     }
     //init station data
     s->sid = sid;
     s->registered = 0;
-    //creatin the sentinel node.
+    //creating the sentinel node.
     struct voter *vSentinel = (struct voter*) malloc(sizeof(struct voter));
     vSentinel->next = NULL;
     s->vsentinel = vSentinel;
@@ -147,7 +147,7 @@ void create_party(int pid)
     printf("\nDONE\n");
 }
 
-//helper function for event C.
+//helper function for event C to add the initialized candidate c to the doubly linked list candidates of the distric d.
 void add_candidate(struct district *d, struct candidate *c)
 {
     struct candidate* prevp = NULL;
@@ -170,7 +170,7 @@ void add_candidate(struct district *d, struct candidate *c)
     //otherwise if the candidate is at the end.
     c->next = NULL;
     prevp->next = c;
-    c->prev = prevp;    
+    c->prev = prevp;
 }
 
 //EVENT C
@@ -178,16 +178,20 @@ int register_candidate(int cid, int did, int pid)
 {
     int district_index = find_district(did);
 
+    //creating candidate.
     struct candidate *c = (struct candidate*) malloc(sizeof(struct candidate));
+
     if (c == NULL){
-        printf("couldn't add candidate with CID %d from the party with PID %d at the district with DID %d", cid, did, pid);
+        printf("couldn't allocate candidate with CID %d from the party with PID %d at the district with DID %d\n", cid, did, pid);
         exit(1);
     }
+    //initialized candidate data.
     c->cid = cid;
     c->pid = pid;
     c->votes = 0;
     c->elected = 0;
     
+    //adding the candidate to the end of the candidates list of district d.
     add_candidate(&Districts[district_index], c);
 
     printf("C %d %d %d\n", cid, did, pid);
@@ -201,10 +205,73 @@ int register_candidate(int cid, int did, int pid)
     return 0;
 }
 
-// int register_voter(int vid, int did, int sid)
-// {
+//helper function to add voter at the end of voters list for event R.
+void add_voter(struct station *s, struct voter *v)
+{
+    struct voter *prevp = NULL;
+    struct voter *p = s->voters;
 
-// }
+    while (p != s->vsentinel)
+    {
+        prevp = p;
+        p = p->next;
+    }
+
+    //list is empty.
+    if(prevp == NULL)
+    {
+        s->voters = v;
+        v->next = s->vsentinel;
+        return;
+    }
+
+    //otherwise if the voter is at the end.
+    v->next = s->vsentinel;
+    prevp->next = v;
+}
+
+//EVENT R
+int register_voter(int vid, int did, int sid)
+{
+    int district_index = find_district(did);
+
+    //finding the station with sid.
+    struct station *s = NULL;
+    for (struct station* p = Districts[district_index].stations; p; p = p->next)
+    {
+        if (p->sid == sid){
+            s = p;
+            break;
+        }
+    }
+    if (s == NULL){
+        printf("couldn't find station with sid %d", sid);
+        exit(1);
+    }
+    
+    //creating voter.
+    struct voter *v = (struct voter *) malloc(sizeof(struct voter));
+    if (v == NULL){
+        printf("couldn't allocate voter with VID %d to station with SID %d in district with SID %d\n", vid, sid, did);
+        exit(1);
+    }
+
+    //initializing voter data.
+    v->vid = vid;
+
+    add_voter(s, v);
+    s->registered++;
+
+    printf("R %d %d %d\n", vid, did, sid);
+    printf("Voters =");
+    for (struct voter *p = s->voters; p != s->vsentinel; p = p->next)
+    {
+        printf(" %d ", p->vid);
+    }
+    printf("\nDONE\n");
+
+    return 0;
+}
 
 // int unregister_voter(int vid)
 // {
