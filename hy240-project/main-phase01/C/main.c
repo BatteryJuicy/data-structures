@@ -152,14 +152,14 @@ int main(int argc, char *argv[])
 			case 'E':
 				delete_empty_stations();
 				break;
-			// case 'V':
-			// 	if (sscanf(trimmed_line, "V %d %d %d", &vid, &sid, &cid) != 3) {
-			// 		fprintf(stderr, "Event V parsing error\n");
-			// 		ret = 1;
-			// 		break;
-			// 	}
-			// 	ret = vote(vid, sid, cid);
-			// 	break;
+			case 'V':
+				if (sscanf(trimmed_line, "V %d %d %d", &vid, &sid, &cid) != 3) {
+					fprintf(stderr, "Event V parsing error\n");
+					ret = 1;
+					break;
+				}
+				ret = vote(vid, sid, cid);
+				break;
 			// case 'M':
 			// 	if (sscanf(trimmed_line, "M %d", &did) != 1) {
 			// 		fprintf(stderr, "Event M parsing error\n");

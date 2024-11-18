@@ -41,6 +41,8 @@ int create_district(int did, int seats)
     Districts[index].did = did;
     Districts[index].seats = seats;
     Districts[index].allotted = 0;
+    Districts[index].blanks = 0;
+    Districts[index].voids = 0;
     index++;
     printf("D %d %d\n", did, seats);
     printf("    Districts =");
@@ -362,10 +364,109 @@ void delete_empty_stations(void)
     printf("DONE\n");
 }
 
-// int vote(int vid, int sid, int cid)
-// {
+//helper function to swap candidates until the list is sorted for event v.
+void swapNsort_candidates(struct district *d, struct candidate *c)
+{
+    //if c is the first element.
+    if (d->candidates == c)
+        return;
+    //if the list needs to be sorted then swap c with its previous node until sorted.
+    while (c->prev != NULL && c->votes > c->prev->votes)
+    {
+        //if c is the second element.
+        if (d->candidates->next == c){
+            d->candidates = c;
+        }
+        //if c is 3rd or later element.
+        else{
+            c->prev->prev->next = c;
+        }
+        c->prev->next = c->next;
+        if (c->next != NULL)
+            c->next->prev = c->prev;
+        c->next = c->prev;
+        struct candidate *temp = c->prev;
+        c->prev = c->prev->prev;
+        temp->prev = c;
+    }
 
-// }
+}
+
+//EVENT V
+int vote(int vid, int sid, int cid)
+{
+    struct district *d = NULL;
+    struct station *s = NULL;
+
+    for (int i = 0; i < 56; i++)
+    {
+        d = &Districts[i];
+        s = d->stations;
+        while (s != NULL)
+        {
+            if (s->sid == sid)
+                break;
+
+            s = s->next;
+        }
+        if (s != NULL && s->sid == sid)
+            break;
+    }
+
+    if (s == NULL) {
+        printf("Station with SID %d not found\n", sid);
+        return 1;
+    }
+
+    s->vsentinel->vid = vid; //setting the sentinel node data to the sought after data.
+
+    struct voter *v = s->voters;
+
+    while (v->vid != vid)
+        v = v->next;
+
+    //if the voter was found
+    if (v != s->vsentinel)
+    {
+        v->voted = 1;
+
+        if (cid == 0)
+            d->blanks++;
+        else if (cid == 1)
+            d->voids++;
+        //if he voted for someone, itereate candidates list until he is found 
+        //and then update the votes and the list to retain it's discending order of votes.
+        else{
+            for (struct candidate *c = d->candidates; c; c = c->next)
+            {
+                if (c->cid == cid){
+                    c->votes++;
+                    swapNsort_candidates(d, c);
+                    break;
+                }
+            }
+        }
+        printf("V %d %d %d\n", vid, sid, cid);
+        printf("    District = %d\n", d->did);
+        printf("    Candidate votes =");
+
+        struct candidate *c = d->candidates;
+        while (c != NULL && c->next != NULL)
+        {
+            printf(" (%d, %d), ", c->cid, c->votes);
+            c = c->next;
+        }
+        printf(" (%d, %d)\n", c->cid, c->votes);
+        printf("    Blanks = %d\n", d->blanks);
+        printf("    Voids = %d\n", d->voids);
+        printf("DONE\n");
+
+        return 0;
+    }
+
+    printf("couldn't find voter with VID %d\n", vid);
+    return 1;
+}
 
 // void count_votes(int did)
 // {
