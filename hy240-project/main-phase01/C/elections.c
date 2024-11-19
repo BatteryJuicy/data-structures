@@ -552,7 +552,7 @@ void count_votes(int did)
     
     struct candidate *c = d->candidates;
     while (c!=NULL)
-    {   party_index = find_party(c->pid);
+    {   int party_index = find_party(c->pid);
 
         if (party_seats[party_index] > 0 && c->elected == 0)
         {
@@ -566,6 +566,7 @@ void count_votes(int did)
     }
 }
 
+//EVENT G
 // void form_government(void)
 // {
 
