@@ -55,7 +55,9 @@ int create_district(int did, int seats)
     return 0;
 }
 
-//helper function to find the wanted district with did.
+/*helper function to find the wanted district with did.
+    returns the index of the district in the Districts[] array.
+*/
 int find_district(int did)
 {
     int index = -1;
@@ -74,7 +76,27 @@ int find_district(int did)
     return index;
 }
 
-//helper function for event S to add the already initialized station s to the district stations list.
+int find_party(int pid)
+{
+    int index = -1;
+
+    for (int i = 0; i < 5; i++)
+    {
+        if (Parties[i].pid == pid){
+            index = i;
+            break;
+        }
+    }
+    if (index == -1){
+        printf("party with pid %d was not found\n", pid);
+        exit(1);
+    }
+    return index;
+}
+
+/*helper function for event S to add the already initialized station s to the district stations list.
+    I'm adding the station at the end of the list to make obvious the order in which the input is parsed.
+*/
 void add_station(struct district *d, struct station *s)
 {
     struct station* prevp = NULL;
@@ -468,10 +490,81 @@ int vote(int vid, int sid, int cid)
     return 1;
 }
 
-// void count_votes(int did)
-// {
+//helper function to add candidate to the sorted list of candidates of a party for event m.
+void add_party_candidate(struct party *p, struct candidate *c)
+{
+    struct candidate *prevq = NULL;
+    struct candidate *q = p->elected;
+    while(q != NULL && q->votes >= c->votes)
+    {
+        prevq = q;
+        q = q->next;
+    }
+    
+    //insert at the start of the list. (c has the most votes of the party candidates)
+    if (prevq == NULL)
+    {
+        c->next = q;
+        p->elected = c;
+        return;
+    }
+    //instert at the middle or end of the list.
+    c->next = q;
+    prevq->next = c;
 
-// }
+}
+
+//EVENT M
+void count_votes(int did)
+{
+    //pointer to district with did.
+    struct district *d = &Districts[find_district(did)];
+    //array of the votes of each party.
+    int party_votes[5] = {0};
+    int party_seats[5] = {0};
+    double metro = 0;
+
+    for (int i = 0; i < 5; i++)
+    {
+        struct candidate *c = d->candidates;
+        while (c != NULL && c->votes > 0)
+        {
+            if (c->pid == i){
+                party_votes[i] += c->votes;
+            }
+            c = c->next;
+        }
+        metro += party_votes[i];
+    }
+    if (d->seats <= 0){
+        printf("district seats have an invalid value. Exiting...\n");
+        exit(1);
+    }
+    else{
+        metro = metro/(double)d->seats;
+    }
+    for (int i = 0; i < 5; i++)
+    {
+        if (metro != 0){
+            party_seats[i] = party_votes[i]/metro;
+        }
+        
+    }
+    
+    struct candidate *c = d->candidates;
+    while (c!=NULL)
+    {   
+        if (party_seats[c->pid] > 0 && c->elected == 0)
+        {
+            c->elected = 1;
+            d->allotted++;
+            Parties[c->pid].nelected++;
+            party_seats[c->pid]--;
+            add_party_candidate(&Parties[c->pid], c);
+        }
+        c = c->next;
+    }
+}
 
 // void form_government(void)
 // {

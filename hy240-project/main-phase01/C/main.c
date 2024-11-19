@@ -160,14 +160,14 @@ int main(int argc, char *argv[])
 				}
 				ret = vote(vid, sid, cid);
 				break;
-			// case 'M':
-			// 	if (sscanf(trimmed_line, "M %d", &did) != 1) {
-			// 		fprintf(stderr, "Event M parsing error\n");
-			// 		ret = 1;
-			// 		break;
-			// 	}
-			// 	count_votes(did);
-			// 	break;
+			case 'M':
+				if (sscanf(trimmed_line, "M %d", &did) != 1) {
+					fprintf(stderr, "Event M parsing error\n");
+					ret = 1;
+					break;
+				}
+				count_votes(did);
+				break;
 			// case 'G':
 			// 	form_government();
 			// 	break;
