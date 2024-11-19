@@ -529,7 +529,7 @@ void count_votes(int did)
         struct candidate *c = d->candidates;
         while (c != NULL && c->votes > 0)
         {
-            if (c->pid == i){
+            if (c->pid == Parties[i].pid){
                 party_votes[i] += c->votes;
             }
             c = c->next;
@@ -543,24 +543,24 @@ void count_votes(int did)
     else{
         metro = metro/(double)d->seats;
     }
-    for (int i = 0; i < 5; i++)
-    {
-        if (metro != 0){
-            party_seats[i] = party_votes[i]/metro;
+    if (metro != 0){
+        for (int i = 0; i < 5; i++)
+        {
+            party_seats[i] = party_votes[i]/metro;        
         }
-        
     }
     
     struct candidate *c = d->candidates;
     while (c!=NULL)
-    {   
-        if (party_seats[c->pid] > 0 && c->elected == 0)
+    {   party_index = find_party(c->pid);
+
+        if (party_seats[party_index] > 0 && c->elected == 0)
         {
             c->elected = 1;
             d->allotted++;
-            Parties[c->pid].nelected++;
-            party_seats[c->pid]--;
-            add_party_candidate(&Parties[c->pid], c);
+            Parties[party_index].nelected++;
+            party_seats[party_index]--;
+            add_party_candidate(&Parties[party_index], c);
         }
         c = c->next;
     }
