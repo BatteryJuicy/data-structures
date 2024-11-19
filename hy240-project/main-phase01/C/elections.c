@@ -358,12 +358,12 @@ void remove_station(struct district *d, struct station *prevs)
     {
         temp = d->stations;
         d->stations = d->stations->next;
-        free(temp);
-        return;
     }
-
-    temp = prevs->next;
-    prevs->next = prevs->next->next;
+    else{
+        temp = prevs->next;
+        prevs->next = prevs->next->next;
+    }
+    free(temp->vsentinel);
     free(temp);
 }
 
@@ -374,12 +374,22 @@ void delete_empty_stations(void)
     for (int i = 0; i < 56; i++)
     {
         struct station *prev = NULL;
+        struct station *s = Districts[i].stations;
 
-        for (struct station *s = Districts[i].stations; s; prev = s, s = s->next)
+        while (s != NULL)
         {
             if (s->voters == s->vsentinel){
                 printf("    %d %d\n", s->sid, Districts[i].did);
+
+                struct station *tmp = s->next;
+
                 remove_station(&Districts[i], prev);
+
+                s = tmp;
+            }
+            else{
+                prev = s;
+                s = s->next;
             }
         }
     }
@@ -524,18 +534,17 @@ void count_votes(int did)
     int party_seats[5] = {0};
     double metro = 0;
 
-    for (int i = 0; i < 5; i++)
+
+    struct candidate *c = d->candidates;
+    while (c != NULL && c->votes > 0)
     {
-        struct candidate *c = d->candidates;
-        while (c != NULL && c->votes > 0)
-        {
-            if (c->pid == Parties[i].pid){
-                party_votes[i] += c->votes;
-            }
-            c = c->next;
-        }
-        metro += party_votes[i];
+        int party_index = find_party(c->pid);
+
+        party_votes[party_index] += c->votes;
+
+        c = c->next;
     }
+        
     if (d->seats <= 0){
         printf("district seats have an invalid value. Exiting...\n");
         exit(1);
@@ -550,7 +559,7 @@ void count_votes(int did)
         }
     }
     
-    struct candidate *c = d->candidates;
+    c = d->candidates;
     while (c!=NULL)
     {   int party_index = find_party(c->pid);
 
@@ -567,10 +576,10 @@ void count_votes(int did)
 }
 
 //EVENT G
-// void form_government(void)
-// {
-
-// }
+void form_government(void)
+{
+    return;
+}
 
 // void form_parliament(void)
 // {

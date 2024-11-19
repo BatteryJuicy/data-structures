@@ -168,9 +168,9 @@ int main(int argc, char *argv[])
 				}
 				count_votes(did);
 				break;
-			// case 'G':
-			// 	form_government();
-			// 	break;
+			case 'G':
+				form_government();
+				break;
 			// case 'N':
 			// 	form_parliament();
 			// 	break;
