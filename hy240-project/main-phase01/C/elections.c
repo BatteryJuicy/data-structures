@@ -547,8 +547,6 @@ void count_votes(int did)
     //array of the votes of each party.
     int party_votes[5] = {0};
     int party_seats[5] = {0};
-    int seats = d->seats;
-    struct candidate* elected[seats];
 
     int party_index;
 
@@ -579,8 +577,8 @@ void count_votes(int did)
             party_seats[i] = party_votes[i]/metro;        
         }
     }
-    
-    int k = 0;
+    printf("M %d\n", did);
+    printf("    Seats =\n");
     c = d->candidates;
     while (c!=NULL)
     {   
@@ -594,17 +592,9 @@ void count_votes(int did)
             party_seats[party_index]-= 1;
             add_party_candidate(&Parties[party_index], c);
             
-            elected[k] = c;
-            k++;
+            printf("      %d %d %d\n", c->cid, c->pid, c->votes);
         }
         c = c->next;
-    }
-    
-    printf("M %d\n", did);
-    printf("    Seats =\n");
-    for (int i = 0; i < d->allotted; i++)
-    {
-        printf("      %d %d %d\n", elected[i]->cid, elected[i]->pid, elected[i]->votes);
     }
     printf("DONE\n");
 }
@@ -612,7 +602,60 @@ void count_votes(int did)
 //EVENT G
 void form_government(void)
 {
-    return;
+    int first_party_index = 0;
+    int first_party_id = 0;
+
+    for (int i = 0, max = 0; i < 5; i++)
+    {
+        if (Parties[i].nelected > max){
+            max = Parties[i].nelected;
+            first_party_index = i;
+        }
+    }
+    first_party_id = Parties[first_party_index].pid;
+    
+    printf("G\n");
+    printf("    Seats =\n");
+    for (int i = 0; i < 56; i++)
+    {
+        struct district *d = &Districts[i];
+
+        int remaining_seats = d->seats - d->allotted;
+        struct candidate *c = d->candidates;
+
+        while (0 < remaining_seats && c != NULL)
+        {
+            if (c->pid == first_party_id && c->elected == 0){
+                c->elected = 1;
+                d->allotted++;
+                Parties[first_party_index].nelected++;
+                add_party_candidate(&Parties[first_party_index], c);
+
+                printf("      %d %d %d\n", d->did, c->cid, c->votes);
+
+                remaining_seats = d->seats - d->allotted;
+            }
+            c = c->next;
+        }
+        c = d->candidates;
+
+        while (0 < remaining_seats && c != NULL)
+        {
+            if (c->elected == 0){
+
+                c->elected = 1;
+                d->allotted++;
+                Parties[find_party(c->pid)].nelected++;
+                add_party_candidate(&Parties[find_party(c->pid)], c);
+
+                printf("      %d %d %d\n", d->did, c->cid, c->votes);
+
+                remaining_seats = d->seats - d->allotted;
+            }
+            c = c->next;
+        }
+    }
+    printf("DONE\n");
 }
 
 // void form_parliament(void)
