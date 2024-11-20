@@ -160,6 +160,7 @@ void create_party(int pid)
     static int party_index = 0;
 
     Parties[party_index].pid = pid;
+    Parties[party_index].nelected = 0;
     party_index++;
 
     printf("P %d\n", pid);
@@ -503,9 +504,24 @@ int vote(int vid, int sid, int cid)
 //helper function to add candidate to the sorted list of candidates of a party for event m.
 void add_party_candidate(struct party *p, struct candidate *c)
 {
+    //making a copy of the candidate to keep the district candidates list undisturbed.
+    struct candidate *new_node = (struct candidate*) malloc(sizeof(struct candidate));
+    if (new_node == NULL){
+        printf("cannot allocate candidate");
+        exit(1);
+    }
+    //copying the data to the new node.
+    new_node->cid = c->cid;
+    new_node->elected = c->elected;
+    new_node->pid = c->pid;
+    new_node->votes = c->votes;
+    new_node->next = NULL;
+    new_node->prev = NULL; //singly linked list.
+    
     struct candidate *prevq = NULL;
     struct candidate *q = p->elected;
-    while(q != NULL && q->votes >= c->votes)
+
+    while(q != NULL && q->votes >= new_node->votes)
     {
         prevq = q;
         q = q->next;
@@ -514,14 +530,13 @@ void add_party_candidate(struct party *p, struct candidate *c)
     //insert at the start of the list. (c has the most votes of the party candidates)
     if (prevq == NULL)
     {
-        c->next = q;
-        p->elected = c;
+        new_node->next = q;
+        p->elected = new_node;
         return;
     }
-    //instert at the middle or end of the list.
-    c->next = q;
-    prevq->next = c;
-
+    //insert at the middle or end of the list.
+    new_node->next = q;
+    prevq->next = new_node;
 }
 
 //EVENT M
@@ -532,15 +547,21 @@ void count_votes(int did)
     //array of the votes of each party.
     int party_votes[5] = {0};
     int party_seats[5] = {0};
+    int seats = d->seats;
+    struct candidate* elected[seats];
+
+    int party_index;
+
     double metro = 0;
 
-
     struct candidate *c = d->candidates;
-    while (c != NULL && c->votes > 0)
+
+    while (c != NULL && c->votes >= 0)
     {
-        int party_index = find_party(c->pid);
+        party_index = find_party(c->pid);
 
         party_votes[party_index] += c->votes;
+        metro += (double)c->votes;
 
         c = c->next;
     }
@@ -559,20 +580,33 @@ void count_votes(int did)
         }
     }
     
+    int k = 0;
     c = d->candidates;
     while (c!=NULL)
-    {   int party_index = find_party(c->pid);
-
+    {   
+        
+        party_index = find_party(c->pid);
         if (party_seats[party_index] > 0 && c->elected == 0)
         {
             c->elected = 1;
             d->allotted++;
             Parties[party_index].nelected++;
-            party_seats[party_index]--;
+            party_seats[party_index]-= 1;
             add_party_candidate(&Parties[party_index], c);
+            
+            elected[k] = c;
+            k++;
         }
         c = c->next;
     }
+    
+    printf("M %d\n", did);
+    printf("    Seats =\n");
+    for (int i = 0; i < d->allotted; i++)
+    {
+        printf("      %d %d %d\n", elected[i]->cid, elected[i]->pid, elected[i]->votes);
+    }
+    printf("DONE\n");
 }
 
 //EVENT G
