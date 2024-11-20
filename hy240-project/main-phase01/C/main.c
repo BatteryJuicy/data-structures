@@ -171,9 +171,9 @@ int main(int argc, char *argv[])
 			case 'G':
 				form_government();
 				break;
-			// case 'N':
-			// 	form_parliament();
-			// 	break;
+			case 'N':
+				form_parliament();
+				break;
 			// case 'I':
 			// 	if (sscanf(trimmed_line, "I %d", &did) != 1) {
 			// 		fprintf(stderr, "Event I parsing error\n");

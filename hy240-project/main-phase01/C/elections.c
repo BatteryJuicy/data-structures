@@ -658,10 +658,82 @@ void form_government(void)
     printf("DONE\n");
 }
 
-// void form_parliament(void)
-// {
+//helper for eventN.
+void append_to_parliament(struct candidate *c){
+    //making a copy of the candidate to keep the district candidates list undisturbed.
+    struct candidate *new_node = (struct candidate*) malloc(sizeof(struct candidate));
+    if (new_node == NULL){
+        printf("cannot allocate candidate");
+        exit(1);
+    }
+    //copying the data to the new node.
+    new_node->cid = c->cid;
+    new_node->elected = c->elected;
+    new_node->pid = c->pid;
+    new_node->votes = c->votes;
+    new_node->next = NULL;
+    new_node->prev = NULL; //singly linked list.
+    
+    struct candidate *prevq = NULL;
+    struct candidate *q = Parliament.members;
 
-// }
+    while(q != NULL)
+    {
+        prevq = q;
+        q = q->next;
+    }
+    
+    //list is empty.
+    if (prevq == NULL)
+    {
+        new_node->next = q;
+        Parliament.members = new_node;
+        return;
+    }
+    //insert at the end of the list.
+    new_node->next = q;
+    prevq->next = new_node;
+}
+
+int are_parties_exhausted(struct candidate*list[5])
+{
+    int result = 0;
+    for (int i = 0; i < 5; i++)
+    {
+        if (list[i] != NULL)
+            result++;
+    }
+    return result;
+}
+
+//EVENT N
+void form_parliament(void)
+{
+    struct candidate *compare_votes[5];
+    for (int i = 0; i < 5; i++)
+    {
+        compare_votes[i] = Parties[i].elected;
+    }
+
+    while (are_parties_exhausted(compare_votes))
+    {
+        int max_index = 0;
+        for (int i = 0; i < 5; i++)
+        {
+            if (compare_votes[i] != NULL)
+                max_index = i;
+        }
+        
+        for (int i = 0; i < 5; i++)
+        {
+            if (compare_votes[i] != NULL && compare_votes[max_index]->votes < compare_votes[i]->votes){
+                max_index = i;
+            }
+        }
+        append_to_parliament(compare_votes[max_index]);
+        compare_votes[max_index] = compare_votes[max_index]->next;
+    }
+}
 
 // void print_district(int did)
 // {
