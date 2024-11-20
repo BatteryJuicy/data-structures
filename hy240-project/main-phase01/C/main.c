@@ -174,14 +174,14 @@ int main(int argc, char *argv[])
 			case 'N':
 				form_parliament();
 				break;
-			// case 'I':
-			// 	if (sscanf(trimmed_line, "I %d", &did) != 1) {
-			// 		fprintf(stderr, "Event I parsing error\n");
-			// 		ret = 1;
-			// 		break;
-			// 	}
-			// 	print_district(did);
-			// 	break;
+			case 'I':
+				if (sscanf(trimmed_line, "I %d", &did) != 1) {
+					fprintf(stderr, "Event I parsing error\n");
+					ret = 1;
+					break;
+				}
+				print_district(did);
+				break;
 			// case 'J':
 			// 	if (sscanf(trimmed_line, "J %d %d", &sid, &did) != 2) {
 			// 		fprintf(stderr, "Event J parsing error\n");

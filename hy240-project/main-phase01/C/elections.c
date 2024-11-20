@@ -743,10 +743,27 @@ void form_parliament(void)
     printf("DONE\n");
 }
 
-// void print_district(int did)
-// {
+//EVENT I
+void print_district(int did)
+{
+    struct district *d = &Districts[find_district(did)];
 
-// }
+    printf("I %d\n", did);
+    printf("    Seats = %d\n", d->seats);
+    printf("    Blanks = %d\n", d->blanks);
+    printf("    Voids = %d\n", d->voids);
+    printf("    Candidates = \n");
+    for (struct candidate *p = d->candidates; p; p = p->next)
+    {
+        printf("      %d %d %d\n", p->cid, p->pid, p->votes);
+    }
+    printf("    Stations =");
+    for (struct station *s = d->stations; s; s = s->next)
+    {
+        printf(" %d ", s->sid);
+    }
+    printf("\nDON\n");
+}
 
 // void print_station(int sid, int did)
 // {
