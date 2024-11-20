@@ -709,6 +709,9 @@ int are_parties_exhausted(struct candidate*list[5])
 //EVENT N
 void form_parliament(void)
 {
+    printf("N\n");
+    printf("    Members =\n");
+
     struct candidate *compare_votes[5];
     for (int i = 0; i < 5; i++)
     {
@@ -730,9 +733,14 @@ void form_parliament(void)
                 max_index = i;
             }
         }
+
         append_to_parliament(compare_votes[max_index]);
+
+        printf("      %d %d %d\n", compare_votes[max_index]->cid, compare_votes[max_index]->pid, compare_votes[max_index]->votes);
+
         compare_votes[max_index] = compare_votes[max_index]->next;
     }
+    printf("DONE\n");
 }
 
 // void print_district(int did)
