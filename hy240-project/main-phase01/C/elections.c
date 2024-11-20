@@ -135,6 +135,8 @@ int create_station(int sid, int did)
     //init station data
     s->sid = sid;
     s->registered = 0;
+    s->voters = NULL;
+    s->next = NULL;
     //creating the sentinel node.
     struct voter *vSentinel = (struct voter*) malloc(sizeof(struct voter));
     vSentinel->next = NULL;
@@ -283,6 +285,7 @@ int register_voter(int vid, int did, int sid)
 
     //initializing voter data.
     v->vid = vid;
+    v->voted = 0;
 
     add_voter(s, v);
     s->registered++;

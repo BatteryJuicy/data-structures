@@ -44,12 +44,60 @@ struct parliament Parliament;
 
 void destroy_structures(void)
 {
-	/*
-	 * TODO: For a bonus
-	 * empty all structures
-	 * and free all memory associated
-	 * with list nodes here
-	 */
+	//free districts and their members (and their members' members)
+	for (int i = 0; i < 56; i++)
+	{
+		struct district *d = &Districts[i];
+		struct station *s = d->stations;
+		while (s != NULL)
+    	{
+			//free voters, vsentinel
+			struct voter *v = s->voters;
+			while (v != s->vsentinel)
+			{
+				struct voter *temp = v->next;
+				free(v);
+				v = temp;
+			}
+			free(s->vsentinel);	
+
+			//free station
+			struct station *temp = s->next;
+			free(s);
+			s = temp;
+    	}
+		struct candidate *c = d->candidates;
+
+		//free candidates
+		while (c != NULL)
+		{
+			struct candidate *temp = c->next;
+			free(c);
+			c = temp;
+		}
+	}
+	for (int i = 0; i < 5; i++)
+	{
+		struct candidate *c = Parties[i].elected;
+
+		//free candidates
+		while (c != NULL)
+		{
+			struct candidate *temp = c->next;
+			free(c);
+			c = temp;
+		}
+	}
+	struct candidate *c = Parliament.members;
+
+	//free candidates
+	while (c != NULL)
+	{
+		struct candidate *temp = c->next;
+		free(c);
+		c = temp;
+	}
+	
 }
 
 int main(int argc, char *argv[])
