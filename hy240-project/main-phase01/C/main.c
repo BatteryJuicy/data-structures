@@ -182,25 +182,25 @@ int main(int argc, char *argv[])
 				}
 				print_district(did);
 				break;
-			// case 'J':
-			// 	if (sscanf(trimmed_line, "J %d %d", &sid, &did) != 2) {
-			// 		fprintf(stderr, "Event J parsing error\n");
-			// 		ret = 1;
-			// 		break;
-			// 	}
-			// 	print_station(sid, did);
-			// 	break;
-			// case 'K':
-			// 	if (sscanf(trimmed_line, "K %d", &pid) != 1) {
-			// 		fprintf(stderr, "Event I parsing error\n");
-			// 		ret = 1;
-			// 		break;
-			// 	}
-			// 	print_party(pid);
-			// 	break;
-			// case 'L':
-			// 	print_parliament();
-			// 	break;
+			case 'J':
+				if (sscanf(trimmed_line, "J %d %d", &sid, &did) != 2) {
+					fprintf(stderr, "Event J parsing error\n");
+					ret = 1;
+					break;
+				}
+				print_station(sid, did);
+				break;
+			case 'K':
+				if (sscanf(trimmed_line, "K %d", &pid) != 1) {
+					fprintf(stderr, "Event I parsing error\n");
+					ret = 1;
+					break;
+				}
+				print_party(pid);
+				break;
+			case 'L':
+				print_parliament();
+				break;
 			default:
 				fprintf(stderr, "WARNING: Unrecognized event %c. Continuing...\n",
 						event);

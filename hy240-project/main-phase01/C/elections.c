@@ -765,17 +765,54 @@ void print_district(int did)
     printf("\nDON\n");
 }
 
-// void print_station(int sid, int did)
-// {
+//EVENT J
+void print_station(int sid, int did)
+{
+    struct station *s = NULL;
+    for (struct station *p = Districts[find_district(did)].stations; p; p = p->next)
+    {
+        if (p->sid == sid){
+            s = p;
+            break;
+        }
+    }
+    if (s == NULL){
+        printf("couldn't find station with sid %d\n", sid);
+        return;
+    }
 
-// }
+    printf("J %d\n", sid);
+    printf("    Registered = %d\n", s->registered);
+    printf("    Voters =\n");
+    for (struct voter *v = s->voters; v != s->vsentinel; v = v->next)
+    {
+        printf("      %d %d\n", v->vid, v->voted);
+    }
+    
+    printf("DONE\n");
+}
 
-// void print_party(int pid)
-// {
+//EVENT K
+void print_party(int pid)
+{
+    struct party *p = &Parties[find_party(pid)];
+    printf("K %d\n", pid);
+    printf("    Elected =\n");
+    for (struct candidate *c = p->elected; c; c = c->next)
+    {
+        printf("      %d %d\n", c->cid, c->votes);
+    }
+    printf("DONE\n");
+}
 
-// }
-
-// void print_parliament(void)
-// {
-
-// }
+//EVENT L
+void print_parliament(void)
+{
+    printf("L \n");
+    printf("    Members =\n");
+    for (struct candidate *p = Parliament.members; p; p = p->next)
+    {
+        printf("      %d %d %d\n", p->cid, p->pid, p->votes);
+    }
+    printf("DONE\n");
+}
