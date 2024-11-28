@@ -30,8 +30,10 @@ void insertRC(node* parent, int data)
 
 void print_node(node* node_)
 {
-    if ( node_ == NULL)
+    if ( node_ == NULL){
+        printf("_");
         return;
+    }
 
     printf("%d", node_->data);
 }
@@ -55,16 +57,17 @@ int get_height(node* root)
 
 void print_level(node* root, int level)
 {
-    if (root == NULL)
+    if (root == NULL){
+        print_node(NULL);
         return;
-
+    }
     if (level == 1){
         print_node(root);
     }
     else if (level > 1)
     {
         print_level(root->lc, level - 1);
-        printf(", ");
+        printf(" ");
         print_level(root->rc, level - 1);
     }
 }
@@ -74,7 +77,7 @@ void print_tree(node* root)
     int height = get_height(root);
     for (int i = 1; i <= height; i++)
     {
-        for (int j = (pow(2, height-1)) - i; j > 0  ; j--)
+        for (int j = (pow(2, height-1)) - i-1; j > 0  ; j--)
         {
             putchar(' ');
         }
@@ -84,25 +87,68 @@ void print_tree(node* root)
     }
 }
 
+void insert(node* root, int k) //sorted BST
+{
+    node* parent = NULL;
+    node* q = root;
+
+    while(q != NULL)
+    {
+        if (k == q->data){
+            printf("node with data %d already exists\n", k);
+            return;
+        }
+        parent = q;
+        if (q->data < k)
+            q = q->rc;
+        else
+            q = q->lc;
+    }
+    if (parent == NULL){
+        printf("empty tree");
+        exit(1);
+    }
+
+    node *new_node = (node*) malloc(sizeof(node));
+    if (new_node == NULL){
+        printf("couldn't allocate node with data %d exiting...", k);
+        exit(1);
+    }
+    new_node->lc = new_node->rc = NULL;
+    new_node->data = k;
+
+    if(parent->data < k)
+        parent->rc = new_node;
+    else
+        parent->lc = new_node;
+}
+
+node* create_empty_tree(int k)
+{
+    node *root = (node*) malloc(sizeof(node));
+    if (root == NULL){
+        printf("couldn't allocate empty tree exiting...");
+        exit(1);
+    }
+    root->data = k;
+    root->lc = root->rc = NULL;
+    return root;
+}
+
 int main()
 {
-    node root = {0, NULL, NULL};
+    node* root = create_empty_tree(3);
 
-    insertLC(&root, 1);
-    insertRC(&root, 2);
+    insert(root, 5);
+    insert(root, 4);
+    insert(root, 6);
+    insert(root, 3);
+    insert(root, 1);
+    insert(root, 2);
+    insert(root, 0);
+    insert(root, 10);
+    insert(root, 9);
 
-    insertLC(root.lc, 3);
-    insertRC(root.lc, 4);
-    insertLC(root.rc, 5);
-    insertRC(root.rc, 6);
+    print_tree(root);
 
-    print_tree(&root);
-
-    // printf("%d\n", root.data);
-    // printf("%d, ", root.lc->data);
-    // printf("%d\n", root.rc->data);
-    // printf("%d, ", root.lc->lc->data);
-    // printf("%d, ", root.lc->rc->data);
-    // printf("%d, ", root.rc->lc->data);
-    // printf("%d \n", root.rc->rc->data);
 }
