@@ -36,20 +36,20 @@ int get_height(node* root)
     return (leftHeight > rightHeight ? leftHeight : rightHeight) + 1;
 }
 
-void print_level(node* root, int level)
+void print_level(node* node, int level)
 {
-    if (root == NULL){
+    if (node == NULL){
         print_node(NULL);
         return;
     }
     if (level == 1){
-        print_node(root);
+        print_node(node);
     }
     else if (level > 1)
     {
-        print_level(root->lc, level - 1);
-        printf(" ");
-        print_level(root->rc, level - 1);
+        print_level(node->lc, level - 1);
+        putchar(' ');
+        print_level(node->rc, level - 1);
     }
 }
 
@@ -58,7 +58,7 @@ void print_tree(node* root)
     int height = get_height(root);
     for (int i = 1; i <= height; i++)
     {
-        for (int j = (pow(2, height-1)) - i-1; j > 0  ; j--)
+        for (int j = 0; j < 3*height - 2*i ; j++)
         {
             putchar(' ');
         }
