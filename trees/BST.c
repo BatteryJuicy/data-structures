@@ -9,25 +9,6 @@ typedef struct tree
     struct tree* rc;
 }node;
 
-void insertLC(node* parent, int data)
-{
-    node* new_child = (node*) malloc(sizeof(node));
-    new_child->data = data;
-    new_child->lc = NULL;
-    new_child->rc = NULL;
-
-    parent->lc = new_child;
-}
-void insertRC(node* parent, int data)
-{
-    node* new_child = (node*) malloc(sizeof(node));
-    new_child->data = data;
-    new_child->lc = NULL;
-    new_child->rc = NULL;
-
-    parent->rc = new_child;
-}
-
 void print_node(node* node_)
 {
     if ( node_ == NULL){
@@ -71,7 +52,7 @@ void print_level(node* root, int level)
         print_level(root->rc, level - 1);
     }
 }
-//todo: make it look better
+
 void print_tree(node* root)
 {
     int height = get_height(root);
@@ -148,6 +129,9 @@ int main()
     insert(root, 0);
     insert(root, 10);
     insert(root, 9);
+    insert(root, 12);
+    insert(root, -1);
+    insert(root, -5);
 
     print_tree(root);
 

@@ -3,9 +3,7 @@
 
 struct Stack{
     int data;
-    int top;
-    struct Stack*;
-
+    struct Stack* top;
 };
 
 void printStack(struct Stack s)
@@ -13,7 +11,7 @@ void printStack(struct Stack s)
     int element = 0;
     struct Stack tmp;
     MakeEmptyStack(&tmp);
-    whilte (isEmptyStack(s))
+    while (isEmptyStack(s))
     {
         element = Pop(s);
         push(&tmp, element);

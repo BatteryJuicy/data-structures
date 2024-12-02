@@ -38,7 +38,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/main",
-            "args": [],
+            "args": ["tree"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
