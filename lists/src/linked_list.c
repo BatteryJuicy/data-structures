@@ -67,6 +67,7 @@ void delete(Node** head, int x)
     free(p);
 }
 
+//returns a pointer to the node.
 Node* search(Node* head, int x)
 {
     while(head != NULL && head->data != x)
@@ -79,6 +80,7 @@ Node* search(Node* head, int x)
     return head;
 }
 
+//returns the data at index i
 int access(Node* head, int i){
     int j = 0;
     for (Node* p = head; p; p = p->next)
