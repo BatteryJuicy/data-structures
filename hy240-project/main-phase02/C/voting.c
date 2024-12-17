@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 // Enable in Makefile
 #ifdef DEBUG_PRINTS_ENABLED
@@ -36,6 +37,7 @@ struct Station {
     Voter* voters;
     Station* next;
 };
+
 struct Voter {
     int vid;
     bool voted;
@@ -80,9 +82,49 @@ const int Primes[PRIMES_SZ] = {
 int MaxStationsCount;
 int MaxSid;
 
+unsigned int Hash(int key)
+{
+    int primes_index = rand() % PRIMES_SZ;
+
+
+    /* int p = Primes[primes_index] + MaxSid + 1; */ //lathos
+
+    int a = rand() % p;
+    a = (a == 0) ? a + 1 : a; // edge case. Guaranteeing that <a> will be bigger than <0> and smaller than <p>;
+    int b = rand() % p;
+
+    unsigned int result = ((a*key + b) % p) % MaxStationsCount;
+
+    return result;
+}
+
 void EventAnnounceElections(int parsedMaxStationsCount, int parsedMaxSid) {
     DebugPrint("A %d %d\n", parsedMaxStationsCount, parsedMaxSid);
     // TODO
+    for (int i = 0; i < DISTRICTS_SZ; i++)
+    {
+        Districts[i].blanks = 0;
+        Districts[i].invalids = 0;
+        for (int j = 0; j < PARTIES_SZ; j++)
+        {
+            Districts[i].partyVotes[j] = 0;
+        }
+        Districts[i].seats = -1;
+        Districts[i].did = DefaultDid;
+    }
+    //stations
+    StationsHT = (Station**) malloc(parsedMaxStationsCount * sizeof(Station*)); // allocating the hash table with a size of <parsedMaxStationsCount>
+
+    //parties
+    for (int i = 0; i < PARTIES_SZ; i++)
+    {
+        Parties[i].pid = i;
+        Parties[i].candidates = NULL;
+        Parties[i].electedCount = 0;
+    }
+    //parliement
+    Parliament = NULL;
+    
 }
 void EventCreateDistrict(int did, int seats) {
     DebugPrint("D %d %d\n", did, seats);
