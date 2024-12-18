@@ -1,7 +1,7 @@
 # CC = gcc-10 # Compiler version installed in most department machines
 # CC = g++-10 # For C++ compilation
 CC = gcc
-CFLAGS = -g -O0 -std=c99 -Wall -Wextra -Wpedantic #-DDEBUG_PRINTS_ENABLED #-Wno-unused-parameter
+CFLAGS = -g -O0 -std=c99 -Wall -Wextra -Wpedantic -DDEBUG_PRINTS_ENABLED -Wno-unused-parameter
 # Uncomment -DDEBUG_PRINTS_ENABLED to enable event parsing debug prints
 # Uncomment -Wno-unused-parameter to disable unused parameter warnings
 LDLIBS = -lm
@@ -18,3 +18,6 @@ $(TARGET): $(SRC) $(INCLUDE)
 
 clean:
 	rm -f $(TARGET)
+
+run:
+	@./main ../testfiles/phase2-small-bonus.txt
