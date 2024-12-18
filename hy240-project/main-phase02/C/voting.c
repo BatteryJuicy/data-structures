@@ -72,6 +72,7 @@ Station** StationsHT;
 Party Parties[PARTIES_SZ];
 ElectedCandidate* Parliament;
 
+const int DefaultSeats = -1;
 const int DefaultDid = -1;
 const int BlankDid = -1;
 const int InvalidDid = -2;
@@ -103,6 +104,7 @@ unsigned int Hash(int key)
     return result;
 }
 
+//event A
 void EventAnnounceElections(int parsedMaxStationsCount, int parsedMaxSid) {
     DebugPrint("A %d %d\n", parsedMaxStationsCount, parsedMaxSid);
     // TODO
@@ -114,7 +116,7 @@ void EventAnnounceElections(int parsedMaxStationsCount, int parsedMaxSid) {
         {
             Districts[i].partyVotes[j] = 0;
         }
-        Districts[i].seats = -1;
+        Districts[i].seats = DefaultSeats;
         Districts[i].did = DefaultDid;
     }
     //stations
@@ -131,56 +133,119 @@ void EventAnnounceElections(int parsedMaxStationsCount, int parsedMaxSid) {
     }
     //parliement
     Parliament = NULL;
-    
+    DebugPrint("DONE\n");
 }
+
+//event D
+int find_empty_index(int start, int end)
+{
+    if (start > end)
+        return -1;
+    
+    int mid = (start + end)/2;
+    if (Districts[mid].did == DefaultDid)
+    {
+        if (mid == 0) //avoid getting index out of bounds error.
+            return mid;
+    
+        //checking most right child of left subtree to see if everything in the left has been initialized.
+        if (Districts[mid-1].did == DefaultDid)
+            return find_empty_index(start, mid-1);
+        else
+            return mid;
+    }
+    else
+        return find_empty_index(mid+1, end);
+}
+
 void EventCreateDistrict(int did, int seats) {
     DebugPrint("D %d %d\n", did, seats);
     // TODO
+    int index = find_empty_index(0, DISTRICTS_SZ-1);
+    if(index == -1){
+        printf("coudln't find space for district");
+        exit(-1);
+    }
+    Districts[index].did = did;
+    Districts[index].seats = seats;
+    
+    DebugPrint("\tDistricts\n\t");
+    for (int i = 0; i < DISTRICTS_SZ; i++)
+    {
+        if (Districts[i].did != DefaultDid){
+            DebugPrint("%d ", Districts[i].did);
+        }
+    }
+    DebugPrint("\nDONE\n");    
 }
+
+
 void EventCreateStation(int sid, int did) {
     DebugPrint("S %d %d\n", sid, did);
     // TODO
 }
+
+
 void EventRegisterVoter(int vid, int sid) {
     DebugPrint("R %d %d\n", vid, sid);
     // TODO
 }
+
+
 void EventRegisterCandidate(int cid, int pid, int did) {
     DebugPrint("C %d %d %d\n", cid, pid, did);
     // TODO
 }
+
+
 void EventVote(int vid, int sid, int cid, int pid) {
     DebugPrint("V %d %d %d %d\n", vid, sid, cid, pid);
     // TODO
 }
+
+
 void EventCountVotes(int did) {
     DebugPrint("M %d\n", did);
     // TODO
 }
+
+
 void EventFormParliament(void) {
     DebugPrint("N\n");
     // TODO
 }
+
+
 void EventPrintDistrict(int did) {
     DebugPrint("I %d\n", did);
     // TODO
 }
+
+
 void EventPrintStation(int sid) {
     DebugPrint("J %d\n", sid);
     // TODO
 }
+
+
 void EventPrintParty(int pid) {
     DebugPrint("K %d\n", pid);
     // TODO
 }
+
+
 void EventPrintParliament(void) {
     DebugPrint("L\n");
     // TODO
 }
+
+
 void EventBonusUnregisterVoter(int vid, int sid) {
     DebugPrint("BU %d %d\n", vid, sid);
     // TODO
 }
+
+
 void EventBonusFreeMemory(void) {
     DebugPrint("BF\n");
     // TODO
