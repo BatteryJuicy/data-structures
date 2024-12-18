@@ -85,9 +85,14 @@ int MaxSid;
 unsigned int Hash(int key)
 {
     int primes_index = rand() % PRIMES_SZ;
+    int p = Primes[primes_index];
 
-
-    /* int p = Primes[primes_index] + MaxSid + 1; */ //lathos
+    //finding the smallest prime bigger than MaxSid if the randomly chosen prime wasn't already bigger.
+    while(p < MaxSid){
+        primes_index++;
+        if(primes_index < PRIMES_SZ)
+            p = Primes[primes_index];
+    }
 
     int a = rand() % p;
     a = (a == 0) ? a + 1 : a; // edge case. Guaranteeing that <a> will be bigger than <0> and smaller than <p>;
@@ -113,6 +118,8 @@ void EventAnnounceElections(int parsedMaxStationsCount, int parsedMaxSid) {
         Districts[i].did = DefaultDid;
     }
     //stations
+    MaxStationsCount = parsedMaxStationsCount;
+    MaxSid = parsedMaxSid;
     StationsHT = (Station**) malloc(parsedMaxStationsCount * sizeof(Station*)); // allocating the hash table with a size of <parsedMaxStationsCount>
 
     //parties
