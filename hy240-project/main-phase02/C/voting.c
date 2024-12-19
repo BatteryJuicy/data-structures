@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+#include <time.h>
 
 // Enable in Makefile
 #ifdef DEBUG_PRINTS_ENABLED
@@ -83,24 +85,13 @@ const int Primes[PRIMES_SZ] = {
 int MaxStationsCount;
 int MaxSid;
 
+unsigned int p;
+unsigned int a;
+unsigned int b;
+
 unsigned int Hash(int key)
 {
-    int primes_index = rand() % PRIMES_SZ;
-    int p = Primes[primes_index];
-
-    //finding the smallest prime bigger than MaxSid if the randomly chosen prime wasn't already bigger.
-    while(p < MaxSid){
-        primes_index++;
-        if(primes_index < PRIMES_SZ)
-            p = Primes[primes_index];
-    }
-
-    int a = rand() % p;
-    a = (a == 0) ? a + 1 : a; // edge case. Guaranteeing that <a> will be bigger than <0> and smaller than <p>;
-    int b = rand() % p;
-
     unsigned int result = ((a*key + b) % p) % MaxStationsCount;
-
     return result;
 }
 
@@ -122,8 +113,9 @@ void EventAnnounceElections(int parsedMaxStationsCount, int parsedMaxSid) {
     //stations
     MaxStationsCount = parsedMaxStationsCount;
     MaxSid = parsedMaxSid;
-    StationsHT = (Station**) malloc(parsedMaxStationsCount * sizeof(Station*)); // allocating the hash table with a size of <parsedMaxStationsCount>
-
+    // allocating the hash table with a size of <parsedMaxStationsCount> and setting the pointers to NULL.
+    StationsHT = (Station**) calloc(parsedMaxStationsCount, sizeof(Station*));
+    
     //parties
     for (int i = 0; i < PARTIES_SZ; i++)
     {
@@ -134,6 +126,23 @@ void EventAnnounceElections(int parsedMaxStationsCount, int parsedMaxSid) {
     //parliement
     Parliament = NULL;
     DebugPrint("DONE\n");
+
+    //initializing random numbers for the hash function
+    srand(time(0));
+
+    unsigned int primes_index = rand() % PRIMES_SZ;
+    p = Primes[primes_index];
+
+    //finding the smallest prime bigger than MaxSid if the randomly chosen prime wasn't already bigger.
+    while(p < abs(MaxSid)){
+        primes_index++;
+        if(primes_index < PRIMES_SZ)
+            p = Primes[primes_index];
+    }
+    a = rand() % (p-1) + 1;
+    b = rand() % p;
+
+    printf("a %d b %d p %d\n", a, b, p);
 }
 
 //event D
@@ -173,16 +182,39 @@ void EventCreateDistrict(int did, int seats) {
     for (int i = 0; i < DISTRICTS_SZ; i++)
     {
         if (Districts[i].did != DefaultDid){
-            DebugPrint("%d ", Districts[i].did);
+            DebugPrint("%d", Districts[i].did);
+        }
+        if (i < DISTRICTS_SZ -1 && Districts[i+1].did != DefaultDid){
+            DebugPrint(", ");
         }
     }
     DebugPrint("\nDONE\n");    
 }
 
-
 void EventCreateStation(int sid, int did) {
     DebugPrint("S %d %d\n", sid, did);
     // TODO
+    Station* new_station = (Station*) malloc(sizeof(Station));
+    new_station->did = did;
+    new_station->sid = sid;
+    new_station->registered = 0;
+    new_station->voters = NULL;
+    new_station->next = NULL;
+
+    unsigned int station_index = Hash(sid);
+    new_station->next = StationsHT[station_index];
+    StationsHT[station_index] = new_station;
+
+    DebugPrint("\tStations[%d]\n\t", station_index);
+    Station* p = StationsHT[station_index];
+    while(p != NULL){
+        DebugPrint("%d", p->sid);
+        if (p->next != NULL)
+            DebugPrint(",");
+        DebugPrint(" ");
+        p = p->next;
+    }
+    DebugPrint("\nDONE\n");
 }
 
 
