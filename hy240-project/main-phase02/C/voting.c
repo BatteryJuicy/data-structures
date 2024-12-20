@@ -301,12 +301,71 @@ void EventRegisterVoter(int vid, int sid) {
     DebugPrint("\nDONE\n");
 }
 
+//event C
+void print_candidates(Candidate* root, int biggest_cid)
+{
+    if (root == NULL)
+        return;
+    
+    print_candidates(root->lc, biggest_cid);
+    if (root->cid < biggest_cid){
+        DebugPrint("\t%d, %d,\n", root->cid, root->did);
+    }
+    else{
+        DebugPrint("\t%d, %d\n", root->cid, root->did);
+    }
+    print_candidates(root->rc, biggest_cid);
+    return;
+}
 
 void EventRegisterCandidate(int cid, int pid, int did) {
     DebugPrint("C %d %d %d\n", cid, pid, did);
     // TODO
-}
+    Candidate* c = malloc(sizeof(Candidate));
+    if (c == NULL){
+        printf("couldn't allocate candidate exiting...");
+        exit(1);
+    }
+    c->lc = c->rc = NULL;
+    c->cid = cid;
+    c->did = did;
+    c->isElected = false;
+    c->votes = 0;
+    
+    Candidate* prev = NULL;
+    Candidate* p = Parties[pid].candidates;
 
+    while(p != NULL)
+    {
+        if (cid == p->cid){
+            printf("candidate with cid %d already exists", cid);
+            return;
+        }
+        prev = p;
+        if (p->cid < cid)
+            p = p->rc;
+        else
+            p = p->lc;
+    }
+
+    if (prev == NULL){
+        Parties[pid].candidates = c;
+    }
+    else if(prev->cid < cid)
+        prev->rc = c;
+    else
+        prev->lc = c;
+
+    DebugPrint("\tCandidates[%d]\n", pid);
+
+    p = Parties[pid].candidates;
+    while (p->rc != NULL){
+        p = p->rc;
+    }
+
+    print_candidates(Parties[pid].candidates, p->cid);
+    DebugPrint("DONE\n");
+}
 
 void EventVote(int vid, int sid, int cid, int pid) {
     DebugPrint("V %d %d %d %d\n", vid, sid, cid, pid);
