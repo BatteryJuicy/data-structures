@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <stdint.h>
 
 // Enable in Makefile
 #ifdef DEBUG_PRINTS_ENABLED
@@ -191,6 +192,7 @@ void EventCreateDistrict(int did, int seats) {
     DebugPrint("\nDONE\n");    
 }
 
+//event S
 void EventCreateStation(int sid, int did) {
     DebugPrint("S %d %d\n", sid, did);
     // TODO
@@ -217,10 +219,86 @@ void EventCreateStation(int sid, int did) {
     DebugPrint("\nDONE\n");
 }
 
+//event R
+Station* find_station(int sid)
+{
+    int index = Hash(sid);
+    
+    Station* result = StationsHT[index];
+
+    while (result != NULL && result->sid != sid)
+    {
+        result = result->next;
+    }
+    return result;
+}
+
+void print_voter(Voter* root, int* count, int registered)
+{
+    if (root == NULL)
+        return;
+    print_voter(root->lc, count, registered);
+    DebugPrint("%d", root->vid);
+    (*count)++;
+    if (*count < registered)
+        DebugPrint(",");
+    DebugPrint(" ");
+    print_voter(root->rc, count, registered);
+}
 
 void EventRegisterVoter(int vid, int sid) {
     DebugPrint("R %d %d\n", vid, sid);
     // TODO
+    Station* st = find_station(sid);
+    Voter* v = malloc(sizeof(Voter));
+    v->lc = v->rc = NULL;
+    v->parent = st->voters;
+    v->vid = vid;
+    v->voted = 0;
+
+    st->registered++;
+
+    //base case
+    if (st->voters == NULL){
+        st->voters = v;
+    }
+    else{
+        int32_t n = st->registered;
+        int num_of_bits = 32 - __builtin_clz(n);
+        Voter* p = st->voters;
+
+        //traversing the CBT using bitwise shifting. Because the tree is complete, the neccessary path is encoded in the number of nodes.
+        for (int32_t bit= 1 << (num_of_bits - 2); bit > 1; bit>>= 1)
+        {
+            /* example:
+                n = 9 = 1001
+                bit=4 = 0100 (shifted 2 times)
+                a bitwise and operation is applied.
+                the condition is false so we move to the left node (n`=2)
+                bit is shifted right
+                n = 1001
+                bit=0010
+                again false so we go left (n`=4)
+                bit is now 1 and the condition is false.
+                Now p points to the parent of the node we want to add.
+            */
+            if (n & bit)
+                p = p->rc;
+            else
+                p = p->lc;
+        }
+        //the last bit of n encodes whether the new node should be lc or rc (even or odd).
+        v->parent = p;
+        if (n & (int32_t)1)
+            p->rc = v;
+        else
+            p->lc = v;
+    }
+    DebugPrint("\tVoters[%d]\n\t", sid);
+    int* count = calloc(1, sizeof(int));
+    print_voter(st->voters, count, st->registered);
+    free(count);
+    DebugPrint("\nDONE\n");
 }
 
 
