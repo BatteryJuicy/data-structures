@@ -135,7 +135,7 @@ void EventAnnounceElections(int parsedMaxStationsCount, int parsedMaxSid) {
     p = Primes[primes_index];
 
     //finding the smallest prime bigger than MaxSid if the randomly chosen prime wasn't already bigger.
-    while(p < abs(MaxSid)){
+    while(p < (unsigned int)abs(MaxSid)){
         primes_index++;
         if(primes_index < PRIMES_SZ)
             p = Primes[primes_index];
@@ -367,9 +367,86 @@ void EventRegisterCandidate(int cid, int pid, int did) {
     DebugPrint("DONE\n");
 }
 
+//event V
+Voter* find_voter(Voter* root, int vid)
+{
+    if (root == NULL)
+        return NULL;
+    if (root->vid == vid)
+        return root;
+    
+    Voter* l = find_voter(root->lc, vid);
+    Voter* r = find_voter(root->rc, vid);
+
+    if (l != NULL)
+        return l;
+    if (r != NULL)
+        return r;
+    else{
+        return NULL;
+    }
+}
+
+Candidate* find_candidate(int pid, int cid)
+{
+    Candidate* c = Parties[pid].candidates;
+
+    while(c != NULL)
+    {
+        if (c->cid == cid)
+            return c;
+        else if (c->cid < cid)
+            c = c->rc;
+        else
+            c = c->lc;
+    }
+    printf("couldn't find candidate with cid %d and pid %d\n", cid, pid);
+    exit(1);
+}
+
+District* find_district(int did)
+{
+    for (int i = 0; i < DISTRICTS_SZ; i++)
+    {
+        if (Districts[i].did == did)
+            return &Districts[i];
+    }
+    printf("couldn't find district with did %d\n", did);
+    exit(1);
+}
+
 void EventVote(int vid, int sid, int cid, int pid) {
     DebugPrint("V %d %d %d %d\n", vid, sid, cid, pid);
     // TODO
+    Station* st = find_station(sid);
+
+    Voter* v = find_voter(st->voters, vid);
+    int did = st->did;
+    District* d = find_district(did);
+
+    v->voted = true;
+    if (cid == -1){
+        d->blanks++;
+    }
+    else if(cid == -2){
+        d->invalids++;
+    }
+    else{
+        Candidate* c = find_candidate(pid, cid);
+        c->votes++;
+        d->partyVotes[pid]++;
+    }
+    
+    DebugPrint("\tDistrict[%d]\n", did);
+    DebugPrint("\tBlanks %d\n", d->blanks);
+    DebugPrint("\tInvalids %d\n", d->invalids);
+    DebugPrint("\tpatryVotes\n");
+    for (int i = 0; i < PARTIES_SZ-1; i++)
+    {
+        DebugPrint("\t%d %d,\n", i, d->partyVotes[i]);
+    }
+    DebugPrint("\t%d %d\n", pid, d->partyVotes[PARTIES_SZ-1]);
+    DebugPrint("DONE\n");
 }
 
 
