@@ -449,10 +449,143 @@ void EventVote(int vid, int sid, int cid, int pid) {
     DebugPrint("DONE\n");
 }
 
+//event M
+int count_candidates(Candidate* root)
+{
+    if (root == NULL)
+        return 0;
+    
+    int l = count_candidates(root->lc);
+    int r = count_candidates(root->rc);
+    return l+r+1;
+}
+
+void add_candidate(Candidate** elected_array, int index, int size, Candidate* root)
+{
+    if(root == NULL || index >= size)
+        return;
+    
+    if(index < size){
+        elected_array[index] = root;
+    }
+    add_candidate(elected_array, index+1, size, root->lc);
+    add_candidate(elected_array, index+1, size, root->rc);
+    return;
+}
+
+void swap(Candidate** array, int i, int j)
+{
+    Candidate* temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+}
+
+void bubble_sort(Candidate** elected_array, int size)
+{
+    bool flag = false;
+
+    for (int i = 0; i < size - 1; i++)
+    {
+        flag = false;
+        for (int j = 0; j < size - i - 1; j++)
+        {
+            if (elected_array[j] > elected_array[j+1]){
+                swap(elected_array, j, j+1);
+                flag = true;
+            }
+        }
+        if (!flag)
+            return;
+    }
+    
+}
+
+//i know how a min-heap works but i don't have time to implement it properly.
+
+void heapify(Candidate** elected_array, int size, Candidate* root)
+{
+    if(root == NULL || size == 0)
+        return;
+    
+    if(elected_array[0]->votes < root->votes){
+        elected_array[0] = root;
+        bubble_sort(elected_array, size);
+    }
+
+    heapify(elected_array, size, root->lc);
+    heapify(elected_array, size, root->rc);
+}
+
+void ElectPartyCandidatesInDistrict(int pid, int did, int partyElected)
+{
+    Candidate** elected = (Candidate**) calloc(partyElected, sizeof(Candidate*));
+
+    Candidate* p = Parties[pid].candidates;
+        
+    add_candidate(elected, 0, partyElected, p);
+    
+    bubble_sort(elected, partyElected);
+    heapify(elected, partyElected, p);
+    for (int i = 0; i < partyElected; i++)
+    {
+
+        elected[i]->isElected = true;
+
+        if(pid == PARTIES_SZ-1 && i == partyElected-1){
+            DebugPrint("\t%d, %d, %d\n", elected[i]->cid, pid, elected[i]->votes);
+        }
+        else
+            DebugPrint("\t%d, %d, %d,\n", elected[i]->cid, pid, elected[i]->votes);
+    }    
+}
 
 void EventCountVotes(int did) {
     DebugPrint("M %d\n", did);
     // TODO
+    District* d = find_district(did);
+    int partyElected[PARTIES_SZ] = {0};
+    //1
+    double metro = 0;
+    for (int i = 0; i < PARTIES_SZ; i++)
+    {
+        metro += (double)d->partyVotes[i];
+    }
+    if (d->seats == 0){
+        metro = 0;
+    }
+    else if(d->seats < 0){
+        printf("district seats have an invalid value. Exiting...\n");
+        exit(1);
+    }
+    else{
+        metro = metro/(double)d->seats;
+    }
+    //2
+    for (int i = 0; i < PARTIES_SZ; i++)
+    {
+        if (metro == 0){
+            partyElected[i] = 0;
+        }
+        else{
+            partyElected[i] = (int)d->partyVotes[i]/metro;
+        }
+        //num of candidates in the party.
+        int party_candidates = count_candidates(Parties[i].candidates);
+        if(party_candidates < partyElected[i]){
+            partyElected[i] = party_candidates;
+        }
+        Parties[i].electedCount += partyElected[i];
+        d->seats -= partyElected[i];
+        if (d->seats < 0)
+            d->seats = 0;
+    }
+    //3
+    DebugPrint("\tseats\n");
+    for (int pid = 0; pid < PARTIES_SZ; pid++)
+    {
+        ElectPartyCandidatesInDistrict(pid, did, partyElected[pid]);
+    }
+    DebugPrint("DONE\n");
 }
 
 

@@ -21,3 +21,6 @@ clean:
 
 run:
 	@./main ../testfiles/phase2-small-bonus.txt
+
+run2:
+	@./main ../testfiles/phase2-tiny.txt
