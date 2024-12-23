@@ -233,17 +233,17 @@ Station* find_station(int sid)
     return result;
 }
 
-void print_voter(Voter* root, int* count, int registered)
+void print_voters(Voter* root, int count, int registered)
 {
     if (root == NULL)
         return;
-    print_voter(root->lc, count, registered);
+    print_voters(root->lc, count+1, registered);
     DebugPrint("%d", root->vid);
-    (*count)++;
-    if (*count < registered)
+    if (count < registered)
         DebugPrint(",");
+
     DebugPrint(" ");
-    print_voter(root->rc, count, registered);
+    print_voters(root->rc, count+1, registered);
 }
 
 void EventRegisterVoter(int vid, int sid) {
@@ -252,7 +252,7 @@ void EventRegisterVoter(int vid, int sid) {
     Station* st = find_station(sid);
     Voter* v = malloc(sizeof(Voter));
     v->lc = v->rc = NULL;
-    v->parent = st->voters;
+    v->parent = NULL;
     v->vid = vid;
     v->voted = 0;
 
@@ -295,9 +295,7 @@ void EventRegisterVoter(int vid, int sid) {
             p->lc = v;
     }
     DebugPrint("\tVoters[%d]\n\t", sid);
-    int* count = calloc(1, sizeof(int));
-    print_voter(st->voters, count, st->registered);
-    free(count);
+    print_voters(st->voters, 0, st->registered);
     DebugPrint("\nDONE\n");
 }
 
@@ -605,11 +603,6 @@ void append(ElectedCandidate** head, Candidate* tree_node, int pid) {
     current->next = new_node;
 }
 
-void merge(ElectedCandidate* current, Candidate)
-{
-    
-}
-
 void EventFormParliament(void) {
     DebugPrint("N\n");
     // TODO
@@ -634,7 +627,7 @@ void EventPrintDistrict(int did) {
     {
         DebugPrint("\t%d %d,\n", i, d->partyVotes[i]);
     }
-    DebugPrint("\t%d %d\n", pid, d->partyVotes[PARTIES_SZ-1]);
+    DebugPrint("\t%d %d\n", PARTIES_SZ-1, d->partyVotes[PARTIES_SZ-1]);
     DebugPrint("DONE\n");
 }
 
@@ -642,6 +635,7 @@ void EventPrintDistrict(int did) {
 void EventPrintStation(int sid) {
     DebugPrint("J %d\n", sid);
     // TODO
+
 }
 
 
@@ -656,10 +650,61 @@ void EventPrintParliament(void) {
     // TODO
 }
 
+Voter* find_last_voter(Station* st)
+{
+    Voter* p = st->voters;
+    if (p == NULL){
+        return NULL;
+    }
+    else{
+        int32_t n = st->registered;
+        int num_of_bits = 32 - __builtin_clz(n);
+
+        for (int32_t bit= 1 << (num_of_bits - 2); bit > 0; bit>>= 1)
+        {
+            if (p == NULL){
+                return NULL;
+            }
+            if (n & bit)
+                p = p->rc;
+            else
+                p = p->lc;
+        }
+        return p;
+    }
+}
 
 void EventBonusUnregisterVoter(int vid, int sid) {
     DebugPrint("BU %d %d\n", vid, sid);
     // TODO
+    Station* s = find_station(sid);
+    Voter* last = find_last_voter(s);
+    Voter* v = find_voter(s->voters, vid);
+    if (last!= NULL && v != NULL){
+        if (v != last){
+            v->vid = last->vid;
+            v->voted = last->voted;
+        }
+        Voter* last_parent = last->parent;
+        if (last_parent != NULL){
+            if (last_parent->lc == last)
+                last_parent->lc = NULL;
+            if(last_parent->rc == last)
+                last_parent->rc = NULL;
+        }
+        else{ // v is the root
+            s->voters = NULL;
+        }
+        free(last);
+        s->registered--;
+    }
+    DebugPrint("\tVoters[%d]\n\t", sid);
+    if(s->voters == NULL)
+    {
+        DebugPrint("empty station");
+    }
+    print_voters(s->voters, 0, s->registered);
+    DebugPrint("\nDONE\n");
 }
 
 
