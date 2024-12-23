@@ -528,7 +528,6 @@ void ElectPartyCandidatesInDistrict(int pid, int did, int partyElected)
     heapify(elected, partyElected, p);
     for (int i = 0; i < partyElected; i++)
     {
-
         elected[i]->isElected = true;
 
         if(pid == PARTIES_SZ-1 && i == partyElected-1){
@@ -567,7 +566,7 @@ void EventCountVotes(int did) {
             partyElected[i] = 0;
         }
         else{
-            partyElected[i] = (int)d->partyVotes[i]/metro;
+            partyElected[i] = (int)(d->partyVotes[i]/metro);
         }
         //num of candidates in the party.
         int party_candidates = count_candidates(Parties[i].candidates);
@@ -588,16 +587,55 @@ void EventCountVotes(int did) {
     DebugPrint("DONE\n");
 }
 
+//event N
+void append(ElectedCandidate** head, Candidate* tree_node, int pid) {
+    ElectedCandidate* new_node = malloc(sizeof(ElectedCandidate));
+    new_node->cid = tree_node->cid;
+    new_node->did = tree_node->did;
+    new_node->next = NULL;
+    new_node->pid = pid;
+    if (*head == NULL) {
+        *head = new_node;
+        return;
+    }
+    ElectedCandidate* current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+void merge(ElectedCandidate* current, Candidate)
+{
+    
+}
 
 void EventFormParliament(void) {
     DebugPrint("N\n");
     // TODO
+
 }
 
-
+//event I
 void EventPrintDistrict(int did) {
     DebugPrint("I %d\n", did);
     // TODO
+    District* d = find_district(did);
+    int seats = 0;
+    ElectedCandidate* p = Parliament;
+    while (p != NULL){
+        seats++;
+    }
+    DebugPrint("\tseats %d\n", seats);
+    DebugPrint("\tblanks %d\n", d->blanks);
+    DebugPrint("\tInvalids %d\n", d->invalids);
+    DebugPrint("\tpartyVotes\n");
+    for (int i = 0; i < PARTIES_SZ-1; i++)
+    {
+        DebugPrint("\t%d %d,\n", i, d->partyVotes[i]);
+    }
+    DebugPrint("\t%d %d\n", pid, d->partyVotes[PARTIES_SZ-1]);
+    DebugPrint("DONE\n");
 }
 
 
