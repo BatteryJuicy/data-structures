@@ -158,7 +158,7 @@ int main(int argc, char* argv[]) {
             continue;
         }
         if (line[0] == 'N') {
-            //EventFormParliament();
+            EventFormParliament();
             continue;
         }
         if (line[0] == 'I') {

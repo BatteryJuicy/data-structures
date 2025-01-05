@@ -586,10 +586,10 @@ void EventCountVotes(int did) {
 }
 
 //event N
-void append(ElectedCandidate** head, Candidate* tree_node, int pid) {
+void append(ElectedCandidate** head, Candidate* node, int pid) {
     ElectedCandidate* new_node = malloc(sizeof(ElectedCandidate));
-    new_node->cid = tree_node->cid;
-    new_node->did = tree_node->did;
+    new_node->cid = node->cid;
+    new_node->did = node->did;
     new_node->next = NULL;
     new_node->pid = pid;
     if (*head == NULL) {
@@ -602,11 +602,93 @@ void append(ElectedCandidate** head, Candidate* tree_node, int pid) {
     }
     current->next = new_node;
 }
+void appendElected(ElectedCandidate** head, ElectedCandidate* node) {
+    ElectedCandidate* new_node = malloc(sizeof(ElectedCandidate));
+    new_node->cid = node->cid;
+    new_node->did = node->did;
+    new_node->next = NULL;
+    new_node->pid = node->pid;
+    if (*head == NULL) {
+        *head = new_node;
+        return;
+    }
+    ElectedCandidate* current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+void reverseInOrderAppend(ElectedCandidate** head, Candidate* root, int pid)
+{
+    if (root == NULL)
+        return;
+    
+    reverseInOrderAppend(head, root->rc, pid);
+    if (root->isElected == true)
+    {
+        append(head, root, pid);
+    }
+    reverseInOrderAppend(head, root->lc, pid);
+}
 
 void EventFormParliament(void) {
     DebugPrint("N\n");
     // TODO
-
+    ElectedCandidate** head_list = calloc(PARTIES_SZ, sizeof(ElectedCandidate*));
+    for (int i = 0; i < PARTIES_SZ; i++)
+    {
+        reverseInOrderAppend(&head_list[i], Parties[i].candidates, i);
+        printf("i %d cid %d\n", i, head_list[i]->cid);
+        printf("indexes4 %d\n",  Parties[4].electedCount);
+    }
+    int indexes[PARTIES_SZ];
+    int vouleftes_count = 0;
+    for (int i = 0; i < PARTIES_SZ; i++)
+    {
+        indexes[i] = Parties[i].electedCount;
+        vouleftes_count += Parties[i].electedCount;
+    }
+    bool is_not_done = true;
+    while(is_not_done)
+    {
+        is_not_done = false;
+        for (int i = 0; i < PARTIES_SZ; i++)
+        {
+            if (indexes[i] != 0)
+                is_not_done = true;
+        }
+        int max = -1;
+        int max_pos = -1;
+        for (int i = 0; i < PARTIES_SZ; i++)
+        {
+            if (head_list[i] != NULL && head_list[i]->cid > max) {
+                max = head_list[i]->cid;
+                max_pos = i;
+            }
+        }
+        
+        if (head_list[max_pos] != NULL){
+            appendElected(&Parliament, head_list[max_pos]);
+            head_list[max_pos] = head_list[max_pos]->next;
+            indexes[max_pos]--;
+        }
+        if(indexes[4] < 17){
+            break;
+        }
+        break;
+    }
+    
+    DebugPrint("\tmembers\n\t");
+    ElectedCandidate* p = Parliament;
+    for (int i = 0; i < vouleftes_count-1 && p != NULL; i++)
+    {
+        DebugPrint("%d, %d, %d,\n", p->cid, p->pid, p->did);
+        p = p->next;
+    }
+    if (p!= NULL)
+        DebugPrint("%d, %d, %d\n", p->cid, p->pid, p->did);
+    DebugPrint("DONE\n");
 }
 
 //event I
