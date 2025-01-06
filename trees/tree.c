@@ -71,13 +71,14 @@ void print_level(node* root, int level)
         print_level(root->rc, level - 1);
     }
 }
+
 //todo: make it look better
 void print_tree(node* root)
 {
     int height = get_height(root);
     for (int i = 1; i <= height; i++)
     {
-        for (int j = (pow(2, height-1)) - i-1; j > 0  ; j--)
+        for (int j = (int)(pow((double)2, (double)(height-1))) - i-1; j > 0  ; j--)
         {
             putchar(' ');
         }
