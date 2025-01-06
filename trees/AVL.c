@@ -7,6 +7,7 @@ typedef struct tree
     int data;
     int depth;
     int balance; // values should be: -1, 0, 1. Otherwise the tree needs to be rebalanced.
+    struct tree* parent;
     struct tree* lc;
     struct tree* rc;
 }node;
@@ -70,23 +71,39 @@ void print_tree(node* root)
     }
 }
 
-node* create_node(int data, int depth, int balance)
+node* create_node(int data, int depth)
 {
     node *new_node = (node*) malloc(sizeof(node));
     if (new_node == NULL){
-        printf("couldn't allocate node with\n\tdata: %d\n\tdepth: %d\n\t balance: %d\n", data, depth, balance);
+        printf("couldn't allocate node with\n\tdata: %d\n\tdepth: %d\n", data, depth);
         exit(1);
     }
-    new_node->lc = new_node->rc = NULL;
+    new_node->lc = new_node->rc = new_node->parent = NULL;
     new_node->data = data;
     new_node->depth = depth;
-    new_node->balance = balance;
-} 
+    new_node->balance = 0;
 
-void insert(node* root, int k) //sorted BST
+    return new_node;
+}
+
+void calculate_balance(node* node)
+{
+    int left_height;
+    int right_height;
+
+    left_height = get_height(node->lc);
+    right_height = get_height(node->rc);
+
+    int balance = right_height - left_height;
+    node->balance = balance;
+}
+
+void insert(node** root, int k)
 {
     node* parent = NULL;
-    node* q = root;
+    node* q = *root;
+
+    int depth = 0;
 
     while(q != NULL)
     {
@@ -99,42 +116,42 @@ void insert(node* root, int k) //sorted BST
             q = q->rc;
         else
             q = q->lc;
-    }
-    if (parent == NULL){
-        printf("empty tree");
-        exit(1);
+        depth++;
     }
 
-   node* new_node = create_node(k, 0, 0);
+    node* new_node = create_node(k, depth);
+    calculate_balance(new_node);
 
-    if(parent->data < k)
-        parent->rc = new_node;
-    else
-        parent->lc = new_node;
-}
-
-node* create_empty_tree(int k)
-{
-    node *root = (node*) malloc(sizeof(node));
-    if (root == NULL){
-        printf("couldn't allocate empty tree exiting...");
-        exit(1);
+    //if the node is not the root.
+    if (parent != NULL)
+    {
+        if(parent->data < k)
+            parent->rc = new_node;
+        else
+            parent->lc = new_node;
     }
-    root->data = k;
-    root->lc = root->rc = NULL;
-    return root;
+    else{   //if the tree is empty.
+        *root = new_node;
+    }
+    new_node->parent = parent;
+
+    //balance the tree if needed.
+    q = new_node;
+    for (int i = depth; i > 0; i--)
+    {
+        if(q->balance < -1 || q->balance > 1){
+            balance_tree();
+        }
+        q = q->parent;
+    }
+    
 }
 
 int main(int argc, char** argv)
 {
-    node* root = create_empty_tree(30);
+    node* root = NULL;
+
+    insert(&root, 30);
 
     print_tree(root);
-
-    ask2a(root);
-
-    printf("hh");
-
-    print_tree(root);
-
 }
