@@ -732,6 +732,7 @@ void EventPrintParliament(void) {
     // TODO
 }
 
+//event BU
 Voter* find_last_voter(Station* st)
 {
     Voter* p = st->voters;
