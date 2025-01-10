@@ -1,3 +1,5 @@
 trees/linux/out/avl
 trees/linux/out/bst
 trees/linux/out/tree
+.vscode/launch.json
+.vscode/settings.json

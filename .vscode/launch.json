@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/adreas/Desktop/data-structures",
-      "program": "/home/adreas/Desktop/data-structures/build/Debug/outDebug",
+      "cwd": "/home/adreas/Desktop/data-structures/trees",
+      "program": "/home/adreas/Desktop/data-structures/trees/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

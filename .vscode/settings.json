@@ -58,6 +58,9 @@
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "files.associations": {
     "stdio.h": "c",
-    "linked_list.h": "c"
-  }
+    "linked_list.h": "c",
+    "stdlib.h": "c"
+  },
+  "makefile.makefilePath": "/home/adreas/Desktop/data-structures/trees/linux/Makefile",
+  "makefile.makePath": "make avl"
 }
