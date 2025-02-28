@@ -144,7 +144,7 @@ node* right_rotate(node* y)
     y->lc = b;
 
     if (b != NULL)
-        b->parent = x;
+        b->parent = y;
 
     x->parent = y->parent;
     y->parent = x;
