@@ -104,3 +104,40 @@ void insert_after(Node* headptr, int index, int data)
     p->next->prev = new_node;
     p->next = new_node;
 }
+
+//---------merge sort-----------
+
+/* Node* split(Node* headerptr)
+{
+    Node* slow = headerptr;
+    Node* fast = headerptr;
+
+    while (fast->next != headerptr && fast->next->next != headerptr)
+    {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    
+    
+}
+
+Node* merge(Node* first, Node* second)
+{
+
+}
+
+void sort(Node* headerptr)
+{
+    //check for empty list
+    Node* p = headerptr->next;
+    if (p == headerptr){
+        fprintf(stderr, "Cannot sort empty list");
+        return; //not exiting since empty list is already sorted.
+    }
+    if (p->next == headerptr){
+        fprintf(stderr, "Cannot sort list with 1 element");
+        return; //not exiting since a list with 1 element is already sorted.
+    }
+    
+
+} */
