@@ -5,45 +5,10 @@
 typedef struct tree 
 {
     int data;
+    int height;
     struct tree* lc;
     struct tree* rc;
 }node;
-
-void insertLC(node* parent, int data)
-{
-    node* new_child = (node*) malloc(sizeof(node));
-    new_child->data = data;
-    new_child->lc = NULL;
-    new_child->rc = NULL;
-
-    parent->lc = new_child;
-}
-void insertRC(node* parent, int data)
-{
-    node* new_child = (node*) malloc(sizeof(node));
-    new_child->data = data;
-    new_child->lc = NULL;
-    new_child->rc = NULL;
-
-    parent->rc = new_child;
-}
-
-void print_node(node* node_)
-{
-    if ( node_ == NULL){
-        printf("_");
-        return;
-    }
-
-    printf("%d", node_->data);
-}
-
-int isLeaf(node* node_)
-{
-    if (node_->lc == NULL && node_->rc == NULL)
-        return 1;
-    return 0;
-}
 
 int get_height(node* root)
 {
@@ -55,49 +20,49 @@ int get_height(node* root)
     return (leftHeight > rightHeight ? leftHeight : rightHeight) + 1;
 }
 
-void print_level(node* root, int level)
+void insertLC(node* parent, int data)
 {
-    if (root == NULL){
-        print_node(NULL);
-        return;
-    }
-    if (level == 1){
-        print_node(root);
-    }
-    else if (level > 1)
-    {
-        print_level(root->lc, level - 1);
-        printf(" ");
-        print_level(root->rc, level - 1);
-    }
+    node* new_child = (node*) malloc(sizeof(node));
+    new_child->data = data;
+    new_child->lc = NULL;
+    new_child->rc = NULL;
+    new_child->height = 0;
+
+    parent->lc = new_child;
+    parent->height = get_height(parent);
+}
+void insertRC(node* parent, int data)
+{
+    node* new_child = (node*) malloc(sizeof(node));
+    new_child->data = data;
+    new_child->lc = NULL;
+    new_child->rc = NULL;
+    new_child->height = 0;
+
+    parent->rc = new_child;
+    parent->height = get_height(parent);
 }
 
-//todo: make it look better
-void print_tree(node* root)
+int isLeaf(node* node_)
 {
-    int height = get_height(root);
-    for (int i = 1; i <= height; i++)
-    {
-        for (int j = (int)(pow((double)2, (double)(height-1))) - i-1; j > 0  ; j--)
-        {
-            putchar(' ');
-        }
-        
-        print_level(root, i);
-        printf("\n");
-    }
+    if (node_->lc == NULL && node_->rc == NULL)
+        return 1;
+    return 0;
 }
+
+#include "printTree.h"
 
 node* create_empty_tree(int k)
 {
-    node *root = (node*) malloc(sizeof(node));
-    if (root == NULL){
+    node *new_node = (node*) malloc(sizeof(node));
+    if (new_node == NULL){
         printf("couldn't allocate empty tree exiting...");
         exit(1);
     }
-    root->data = k;
-    root->lc = root->rc = NULL;
-    return root;
+    new_node->data = k;
+    new_node->height = 0;
+    new_node->lc = new_node->rc = NULL;
+    return new_node;
 }
 
 int main()
