@@ -5,62 +5,21 @@
 typedef struct tree 
 {
     int data;
-    int balance; // values should be: -1, 0, 1. Otherwise the tree needs to be rebalanced.
+    int height;
     struct tree* parent;
     struct tree* lc;
     struct tree* rc;
 }node;
 
-void print_node(node* node_)
+#include "printTree.h"
+
+void fix_height(node* node_)
 {
-    if ( node_ == NULL){
-        printf("_");
-        return;
-    }
+    if (node_ == NULL) return;
 
-    printf("%d", node_->data);
-}
-
-int get_height(node* root)
-{
-    if (root == NULL)
-        return 0;
-
-    int leftHeight = get_height(root->lc);
-    int rightHeight = get_height(root->rc);
-    return (leftHeight > rightHeight ? leftHeight : rightHeight) + 1;
-}
-
-void print_level(node* node_, int level)
-{
-    if (node_ == NULL){
-        print_node(NULL);
-        return;
-    }
-    if (level == 1){
-        print_node(node_);
-    }
-    else if (level > 1)
-    {
-        print_level(node_->lc, level - 1);
-        putchar(' ');
-        print_level(node_->rc, level - 1);
-    }
-}
-
-void print_tree(node* root)
-{
-    int height = get_height(root);
-    for (int i = 1; i <= height; i++)
-    {
-        for (int j = 0; j < 3*height - 2*i ; j++)
-        {
-            putchar(' ');
-        }
-        
-        print_level(root, i);
-        printf("\n");
-    }
+    int lh = node_->lc ? node_->lc->height : -1;
+    int rh = node_->rc ? node_->rc->height : -1;
+    node_->height = (lh > rh ? lh : rh) + 1; // max(lh, rh) + 1.
 }
 
 node* create_node(int data)
@@ -72,21 +31,20 @@ node* create_node(int data)
     }
     new_node->lc = new_node->rc = new_node->parent = NULL;
     new_node->data = data;
-    new_node->balance = 0;
+    new_node->height = 0;
 
     return new_node;
 }
 
-void calculate_balance(node* node_)
+int calculate_balance(node* node_)
 {
-    int left_height;
-    int right_height;
+    if (node_ == NULL) return 0;
 
-    left_height = get_height(node_->lc);
-    right_height = get_height(node_->rc);
+    int left_height = node_->lc ? node_->lc->height : -1;
+    int right_height = node_->rc ? node_->rc->height : -1;
 
-    int balance = left_height - right_height;
-    node_->balance = balance;
+    int balance = right_height - left_height;
+    return balance;
 }
 
 node* left_rotate(node* x)
@@ -111,8 +69,9 @@ node* left_rotate(node* x)
     y->parent = x->parent;
     x->parent = y;
 
-    calculate_balance(x);
-    calculate_balance(y);
+    //fix heights
+    fix_height(x);
+    fix_height(y);
 
     if (y->parent == NULL)
         return y;
@@ -149,8 +108,9 @@ node* right_rotate(node* y)
     x->parent = y->parent;
     y->parent = x;
 
-    calculate_balance(x);
-    calculate_balance(y);
+    //fix heights
+    fix_height(y);
+    fix_height(x);
 
     if (x->parent == NULL)
         return x;
@@ -166,29 +126,33 @@ node* right_rotate(node* y)
 }
 
 node* balance_tree(node* node_)
-{   
-
+{
     while(node_ != NULL)
     {
-        calculate_balance(node_);
+        fix_height(node_);
 
-        if (node_->balance >= 2){
-            if (node_->lc != NULL && node_->lc->balance < 0){
+        int balance = calculate_balance(node_);
+
+        //if node is left heavy.
+        if (balance < -1){//critical node
+            //if left child is right heavy.
+            if (node_->lc != NULL && calculate_balance(node_->lc) > 0){ //true: LR. false: LL.
                 node_->lc = left_rotate(node_->lc);
             }
-            node_ = right_rotate(node_);
+            node_ = right_rotate(node_); //only or second rotation depending on which case it is (LR or LL).
         }
-        else if (node_->balance <= -2){
-            if (node_->rc != NULL && node_->rc->balance > 0){
+        //if node is right heavy.
+        else if (balance > 1){//crtitical node
+            //if right child is left heavy/
+            if (node_->rc != NULL && calculate_balance(node_->rc) < 0){ //true: RL, false: RR
                 node_->rc = right_rotate(node_->rc);
             }
-            node_ = left_rotate(node_);
+            node_ = left_rotate(node_); //only or second rotation depending on which case it is (RL or RR).
         }
 
         if (node_->parent == NULL){
             return node_; //return new root.
         }
-
         node_ = node_->parent;
     }
     return NULL;
@@ -201,7 +165,6 @@ void insert(node** root, int k)
 
     while(q != NULL)
     {
-        
         if (k == q->data){
             printf("node with data %d already exists\n", k);
             return;
@@ -229,10 +192,17 @@ void insert(node** root, int k)
     new_node->parent = parent;
 
     //balance the tree.
-    (*root) = balance_tree(new_node); //the only case where the root value will change is if function performs a rotation on the root.
+    *root = balance_tree(new_node); //the only case where the root value will change is if function performs a rotation on the root.
 
     print_tree(*root);
-    printf("\n----------\n");
+    printf("\n--------------------------------------------\n");
+}
+
+void inorder(node* root) {
+    if (!root) return;
+    inorder(root->lc);
+    printf("%d ", root->data);
+    inorder(root->rc);
 }
 
 int main()
@@ -241,10 +211,18 @@ int main()
 
     insert(&root, 1);
     insert(&root, 2);
-    insert(&root, 3);
+    insert(&root, 6);
     insert(&root, 10);
+    insert(&root, 4);
     insert(&root, 5);
+    insert(&root, 3);
     insert(&root, 7);
+    insert(&root, 9);
     insert(&root, 8);
 
+    printf("height: %d\n", root->height);
+    printf("spaces: %d\n", (1 << 3)/(3+1) - 1);
+
+    print_tree(root);
+    inorder(root);
 }
