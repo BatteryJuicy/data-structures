@@ -7,65 +7,18 @@ typedef struct tree
     int data;
     struct tree* lc;
     struct tree* rc;
+    int height;
 }node;
-
-void print_node(node* node_)
-{
-    if ( node_ == NULL){
-        printf("_");
-        return;
-    }
-
-    printf("%d", node_->data);
-}
-
-int isLeaf(node* node_)
-{
-    if (node_->lc == NULL && node_->rc == NULL)
-        return 1;
-    return 0;
-}
 
 int get_height(node* root)
 {
     if (root == NULL)
-        return 0;
+        return -1;
 
     int leftHeight = get_height(root->lc);
     int rightHeight = get_height(root->rc);
-    return (leftHeight > rightHeight ? leftHeight : rightHeight) + 1;
-}
-
-void print_level(node* node, int level)
-{
-    if (node == NULL){
-        print_node(NULL);
-        return;
-    }
-    if (level == 1){
-        print_node(node);
-    }
-    else if (level > 1)
-    {
-        print_level(node->lc, level - 1);
-        putchar(' ');
-        print_level(node->rc, level - 1);
-    }
-}
-
-void print_tree(node* root)
-{
-    int height = get_height(root);
-    for (int i = 1; i <= height; i++)
-    {
-        for (int j = 0; j < 3*height - 2*i ; j++)
-        {
-            putchar(' ');
-        }
-        
-        print_level(root, i);
-        printf("\n");
-    }
+    root->height = leftHeight > rightHeight ? leftHeight : rightHeight;
+    return root->height + 1;
 }
 
 void insert(node* root, int k) //sorted BST
@@ -97,11 +50,13 @@ void insert(node* root, int k) //sorted BST
     }
     new_node->lc = new_node->rc = NULL;
     new_node->data = k;
+    new_node->height = 0;
 
     if(parent->data < k)
         parent->rc = new_node;
     else
         parent->lc = new_node;
+    get_height(root);
 }
 
 node* create_empty_tree(int k)
@@ -116,24 +71,22 @@ node* create_empty_tree(int k)
     return root;
 }
 
+#include "printTree.h"
+
 int main(int argc, char** argv)
 {
-    node* root = create_empty_tree(30);
+    node* root = create_empty_tree(5);
 
-    insert(root, 50);
-    insert(root, 40);
-    insert(root, 60);
-    insert(root, 30);
-    insert(root, 10);
-    insert(root, 20);
-    insert(root, 0);
-    insert(root, 13);
-    insert(root, 90);
-    insert(root, 12);
-    insert(root, 9);
     insert(root, 5);
+    insert(root, 4);
+    insert(root, 6);
+    insert(root, 3);
+    insert(root, 1);
+    insert(root, 2);
+    insert(root, 0);
+    insert(root, 7);
+    insert(root, 9);
+    insert(root, 8);
 
     print_tree(root);
-
-    insert(root, 12);
 }
