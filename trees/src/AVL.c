@@ -1,17 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
-typedef struct tree 
-{
+#include "treeUtils.h"
+
+struct tree{
     int data;
-    int height;
-    struct tree* parent;
     struct tree* lc;
     struct tree* rc;
-}node;
-
-#include "printTree.h"
+    struct tree* parent;
+    int height;
+};
 
 void fix_height(node* node_)
 {
@@ -194,15 +192,8 @@ void insert(node** root, int k)
     //balance the tree.
     *root = balance_tree(new_node); //the only case where the root value will change is if function performs a rotation on the root.
 
-    print_tree(*root);
+    print_tree(*root, get_height(*root));
     printf("\n--------------------------------------------\n");
-}
-
-void inorder(node* root) {
-    if (!root) return;
-    inorder(root->lc);
-    printf("%d ", root->data);
-    inorder(root->rc);
 }
 
 int main()
@@ -220,9 +211,6 @@ int main()
     insert(&root, 9);
     insert(&root, 8);
 
-    printf("height: %d\n", root->height);
-    printf("spaces: %d\n", (1 << 3)/(3+1) - 1);
-
-    print_tree(root);
-    inorder(root);
+    print_tree(root, get_height(root));
+    inorderPrint(root);
 }

@@ -1,25 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
-typedef struct tree 
+#include "treeUtils.h"
+
+struct tree 
 {
     int data;
     struct tree* lc;
     struct tree* rc;
-    int height;
-}node;
-
-int get_height(node* root)
-{
-    if (root == NULL)
-        return -1;
-
-    int leftHeight = get_height(root->lc);
-    int rightHeight = get_height(root->rc);
-    root->height = leftHeight > rightHeight ? leftHeight : rightHeight;
-    return root->height + 1;
-}
+};
 
 void insert(node* root, int k) //sorted BST
 {
@@ -50,7 +39,6 @@ void insert(node* root, int k) //sorted BST
     }
     new_node->lc = new_node->rc = NULL;
     new_node->data = k;
-    new_node->height = 0;
 
     if(parent->data < k)
         parent->rc = new_node;
@@ -71,8 +59,6 @@ node* create_empty_tree(int k)
     return root;
 }
 
-#include "printTree.h"
-
 int main(int argc, char** argv)
 {
     node* root = create_empty_tree(5);
@@ -88,5 +74,5 @@ int main(int argc, char** argv)
     insert(root, 9);
     insert(root, 8);
 
-    print_tree(root);
+    print_tree(root, get_height(root));
 }

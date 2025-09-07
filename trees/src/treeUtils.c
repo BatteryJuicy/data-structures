@@ -1,16 +1,44 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
+#include "treeUtils.h"
 
-typedef struct Qnode {
+struct tree{
+    int data;
+    struct tree* lc;
+    struct tree* rc;
+};
+
+void inorderPrint(node* root) {
+    static int callStackCount = 0;
+    callStackCount++;
+    if (!root) {
+        callStackCount--;
+        return;
+    }
+    inorderPrint(root->lc);
+    printf("%d ", root->data);
+    inorderPrint(root->rc);
+    if(callStackCount <= 0)
+        printf("\n");
+}
+
+int get_height(node* root)
+{
+    if (root == NULL)
+        return -1;
+
+    int leftHeight = get_height(root->lc);
+    int rightHeight = get_height(root->rc);
+    return (leftHeight > rightHeight ? leftHeight : rightHeight) + 1;
+}
+
+struct Qnode {
     node* treeNode;
     struct Qnode* next;
-} Qnode;
+};
 
-typedef struct queue {
+struct queue {
     Qnode* front;
     Qnode* rear;
-} queue;
+};
 
 void enqueue(queue* q, node* tn) {
     Qnode* new_node = (Qnode*) malloc(sizeof(Qnode));
@@ -39,21 +67,20 @@ int isEmptyQueue(queue* q){
     return 0;
 }
 
-void print_tree(node* root){
+void print_tree(node* root, int tree_height){
     if (!root) return;
 
     queue Q = {NULL, NULL};
     enqueue(&Q, root);
 
     int level = 0;
-    int max_height = root->height;
 
-    while (!isEmptyQueue(&Q) && level <= max_height) {
+    while (!isEmptyQueue(&Q) && level <= tree_height) {
         int nodes_in_level = 1 << level; //2^level.
         for (int i = 0; i < nodes_in_level && !isEmptyQueue(&Q); i++) {
             node* P = dequeue(&Q);
 
-            int spaces = (1 << (max_height - level+1)) - 1;
+            int spaces = (1 << (tree_height - level+1)) - 1;
             for (int s = 0; s < spaces; s++) putchar(' ');
 
             if (P) {
