@@ -4,31 +4,61 @@ CFLAGS = -Wall
 SRCDIR = src
 OUTDIR = out
 
-all: $(OUTDIR)/tree $(OUTDIR)/bst $(OUTDIR)/avl
-
-.PHONY: all tree bst avl
-
+all: $(OUTDIR) treeUtils tree bst avl redblack
+treeUtils: $(OUTDIR)/treeUtils.o
 tree: $(OUTDIR)/tree
-bst:  $(OUTDIR)/bst
-avl:  $(OUTDIR)/avl
+bst: $(OUTDIR)/bst
+avl: $(OUTDIR)/avl
+redblack: $(OUTDIR)/redblack
 
 $(OUTDIR):
-	@mkdir -p out
+	@mkdir out
 
+#---------------COMPILE TARGETS---------------
 
-$(OUTDIR)/tree: $(SRCDIR)/tree.c | $(OUTDIR)
-	@echo making tree...
-	@$(CC) $(CFLAGS) -lm $< -o $(OUTDIR)/tree
+#object file
+$(OUTDIR)/treeUtils.o: $(SRCDIR)/treeUtils.c $(SRCDIR)/treeUtils.h
+	@$(CC) $(CFLAGS) -c $< -o $@
 
-$(OUTDIR)/bst: $(SRCDIR)/BST.c | $(OUTDIR)
-	@echo making bst...
-	@$(CC) $(CFLAGS) $< -o $(OUTDIR)/bst
+$(OUTDIR)/tree: $(SRCDIR)/tree.c $(OUTDIR)/treeUtils.o | $(OUTDIR)
+	@echo Making binary tree...
+	@$(CC) $(CFLAGS) $^ -o $@
 
-$(OUTDIR)/avl: $(SRCDIR)/AVL.c | $(OUTDIR)
-	@echo making avl...
-	@$(CC) $(CFLAGS) $< -o $(OUTDIR)/avl
+$(OUTDIR)/bst: $(SRCDIR)/BST.c $(OUTDIR)/treeUtils.o | $(OUTDIR)
+	@echo Making bst...
+	@$(CC) $(CFLAGS) $^ -o $@
+
+$(OUTDIR)/avl: $(SRCDIR)/AVL.c $(OUTDIR)/treeUtils.o | $(OUTDIR)
+	@echo Making avl...
+	@$(CC) $(CFLAGS) $^ -o $@
+
+$(OUTDIR)/redblack: $(SRCDIR)/redblack.c $(OUTDIR)/treeUtils.o | $(OUTDIR)
+	@echo Making redblack
+	@$(CC) $(CFLAGS) $^ -o $@
+
+#---------------RUN TARGETS---------------
+
+runTree: $(OUTDIR) $(OUTDIR)/treeUtils.o $(OUTDIR)/tree
+	@echo Running: tree
+	@./$(OUTDIR)/tree
+
+runBST: $(OUTDIR) $(OUTDIR)/treeUtils.o $(OUTDIR)/bst
+	@echo Running: bst
+	@./$(OUTDIR)/bst
+
+runAVL: $(OUTDIR) $(OUTDIR)/treeUtils.o $(OUTDIR)/avl
+	@echo Running: avl
+	@./$(OUTDIR)/avl
+
+runRB: $(OUTDIR) $(OUTDIR)/treeUtils.o $(OUTDIR)/redblack
+	@echo Running redblack
+	@./$(OUTDIR)/redblack
+
+run: runTree runBST runAVL runRB
 
 clean:
 	@rm -f $(OUTDIR)/tree
 	@rm -f $(OUTDIR)/bst
 	@rm -f $(OUTDIR)/avl
+
+.PHONY: all treeUtils tree bst avl redblack run runTree runBST runAVL runRB clean
