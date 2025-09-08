@@ -34,8 +34,10 @@ student* create_student(int am, char* name, int year)
     student* result = malloc(sizeof(student));
     
     result->am = am;
-    result-> name = name;
+    result->name = malloc(strlen(name)+1);
+    strcpy(result->name, name);
     result->year = year;
+    result->next = NULL;
 
     return result;
 }
@@ -62,43 +64,40 @@ void init_hashtable(student* table_ptr[])
     }
 }
 
-//takes as parameters a hashtable and an optional string to specify printing mode.
-//to print each student in detail the second argument should be "detail". Otherwise the default mode will be used.
-void print_table(student* table[], ...)
+void print_student_detail(student* st)
 {
-    const char* mode = "default";
+    print_student(st);
+    printf("\n\t\t");
+}
+void print_student_simple(student*st)
+{
+    printf("%s ", st->name);
+}
 
-    va_list args;
-    va_start(args, table);
-    const char* passed_mode = va_arg(args, const char*);
-    if (passed_mode != NULL)
-        mode = passed_mode;
-    va_end(args);
-
+//takes as parameters a hashtable and a string to specify printing mode.
+//to print each student in detail the second argument should be "detail". Otherwise the default mode will be used.
+void print_table(student* table[], const char* mode)
+{
     printf("START\n");
     for (int i = 0; i < TABLE_SIZE; i++)
     {
         printf("\t%d\t", i);
         if (table[i] != NULL)
         {
-            student* tmp = table[i];
-            int length = list_length(table[i]);
-            for (int j = 0; j < length; j++)
+            void (*print_func)(student*);
+            if (strcmp(mode, "detail") == 0)
+                print_func = print_student_detail;
+            else
+                print_func = print_student_simple;
+            for (student* p = table[i]; p != NULL; p = p->next)
             {
-                if (!strcmp(mode, "detail")){
-                    print_student(tmp);
-                    printf("\n\t\t");
-                }
-                else{
-                    printf("%s ", tmp->name);
-                }
-                tmp = tmp->next;
+                print_func(p);
             }
             printf("\n");
         }
         else
         {
-            if (!strcmp(mode, "detail"))
+            if (strcmp(mode, "detail") == 0)
                 printf("----\n\n\n");
             else
                 printf("----\n");
@@ -132,8 +131,7 @@ bool hashtable_insert(student* table[], student* p)
     else
     {
         student* first = table[index];
-
-        p->next = table[index];
+        p->next = first;
         table[index] = p;
     }
     return true;
@@ -145,23 +143,24 @@ bool hashtable_delete(student *table[], char name[])
     int index = hash(name);
     
     student* prev_student = NULL;
-    student* result = table[index];
+    student* p = table[index];
 
-    while (result != NULL && strcmp(result->name, name))
+    while (p != NULL && strcmp(p->name, name) != 0)
     {
-        prev_student = result;
-        result = result->next;
+        prev_student = p;
+        p = p->next;
     }
-    if (result == NULL)
+    if (p == NULL)
         return false;
     if (prev_student == NULL) // remove the first student
     {
-        table[index] = result->next;
+        table[index] = p->next;
     }
     else{
-        prev_student->next = result->next;
+        prev_student->next = p->next;
     }
-    free(result);
+    free(p->name);
+    free(p);
     return true;
     
 }
@@ -172,7 +171,7 @@ int main()
 
     init_hashtable(hash_table);
 
-    print_table(hash_table);
+    print_table(hash_table, "");
 
     student* Themis = create_student(5101, "Themis",2023);
     student* Alexandros = create_student(5555, "Alexandros", 2023);
@@ -204,19 +203,21 @@ int main()
 
     print_table(hash_table, "detail");
 
-    print_table(hash_table);
+    print_table(hash_table, "");
 
     if(hashtable_delete(hash_table, "Sokratis")){
-        printf("delted <Sokratis>\n");
+        printf("deleted <Sokratis>\n");
     }
     else{
         printf("couldn't delete <Sokratis>\n");
     }
 
-    print_table(hash_table);
+    print_table(hash_table, "");
 
-    hashtable_delete(hash_table, "Thanos");
+    if(hashtable_delete(hash_table, "Thanos")){
+        printf("deleted <Thanos>\n");
+    }
     hashtable_delete(hash_table, "Platonas");
 
-    print_table(hash_table);
+    print_table(hash_table, "");
 }
