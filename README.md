@@ -5,19 +5,20 @@ This repo so far includes:
 Partial (some full) implementations of the following data structures in C:
 1. Linked list.
 2. Cyclical doubly linked list.
-3. Binary tree.
-4. Binary search tree.
-5. AVL tree.
-6. Stack.
-7. Queue.
-8. Hashtable
+3. Stack.
+4. Queue.
+5. Hashtable
+6. 3. Binary tree.
+7. Binary search tree.
+8. AVL tree.
+9. Red-Black tree.
 
 Also the following simple algorithms in python:
 1. Binary search.
 2. Linear search.
 3. Merge sort.
 4. Bubble sort.
-5. Calculate permutations.
+5. Print permutations of a string.
 
 Also theoretical excersises in pseudocode.
 
