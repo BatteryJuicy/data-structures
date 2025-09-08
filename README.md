@@ -1,27 +1,52 @@
-This is a repository for data structures I'll make in C for the pourposes of furthering my understanding of C and for my data structures class(HY240)
+# Data Structures in C (HY240)
 
-This repo so far includes:
+This repository contains my implementations of various data structures and algorithms.  
+The goal is to deepen my understanding of C programming and to support my coursework for the **Data Structures** class (HY240).
 
-Partial (some full) implementations of the following data structures in C:
-1. Linked list.
-2. Cyclical doubly linked list.
-3. Stack.
-4. Queue.
-5. Hashtable
-6. 3. Binary tree.
-7. Binary search tree.
-8. AVL tree.
-9. Red-Black tree.
+---
 
-Also the following simple algorithms in python:
-1. Binary search.
-2. Linear search.
-3. Merge sort.
-4. Bubble sort.
-5. Print permutations of a string.
+## 📂 Contents
 
-Also theoretical excersises in pseudocode.
+### C Implementations
+Partial (and some complete) implementations of common data structures with their operations:
 
-Also 2 versions of a project that simulates a simplified version of the electoral system of Greece with the following data structures for each version:
-1. Sorted SLL, unsorted SLL with sentinel node, sorted DLL.
-2. SLL, BST, complete BST.
+1. Singly Linked List (SLL)  
+2. Circular Doubly Linked List (DLL)  
+3. Stack  
+4. Queue  
+5. Hash Table  
+6. Binary Tree  
+7. Binary Search Tree (BST)  
+8. AVL Tree  
+9. Red-Black Tree  
+
+### Python Implementations
+Simple algorithms written in Python:
+
+1. Binary Search  
+2. Linear Search  
+3. Merge Sort  
+4. Bubble Sort  
+5. String Permutations  
+
+### Pseudocode Exercises
+- Theoretical exercises written in pseudocode.  
+
+### Project: Greek Electoral System (Simplified Simulation)
+Two versions of a project that simulate a simplified version of Greece’s electoral system, implemented with different data structures:
+
+1. **Version 1:** Sorted SLL, Unsorted SLL (with sentinel node), Sorted DLL  
+2. **Version 2:** SLL, BST, Complete BST  
+
+---
+
+## 🛠️ How to Use
+- **C programs**: Compile with `make`.  
+- **Python scripts**: Run with `python3 filename.py`.  
+
+---
+
+## 📖 Purpose
+- Learn and practice data structure implementation.  
+- Provide a reusable library of reference code for future C projects.  
+- Explore theoretical exercises and simulations.  
