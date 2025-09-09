@@ -1,7 +1,7 @@
 # Data Structures in C (HY240)
 
 This repository contains my implementations of various data structures and algorithms.  
-The goal is to deepen my understanding of C programming and to support my coursework for the **Data Structures** class (HY240).
+The purpose of this repository is to continue exploring and mastering data structures in C, building on the concepts covered in the Data Structures class (HY240).
 
 ---
 
