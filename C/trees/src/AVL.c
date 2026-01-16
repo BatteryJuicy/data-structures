@@ -4,7 +4,7 @@
 #include "treeUtils.h"
 
 struct tree{
-    int data;
+    int key;
     struct tree* lc;
     struct tree* rc;
     struct tree* parent;
@@ -20,15 +20,15 @@ void fix_height(node* node_)
     node_->height = (lh > rh ? lh : rh) + 1; // max(lh, rh) + 1.
 }
 
-node* create_node(int data)
+node* create_node(int key)
 {
     node *new_node = (node*) malloc(sizeof(node));
     if (new_node == NULL){
-        printf("couldn't allocate node with\n\tdata: %d\n", data);
+        printf("couldn't allocate node with\n\tkey: %d\n", key);
         exit(1);
     }
     new_node->lc = new_node->rc = new_node->parent = NULL;
-    new_node->data = data;
+    new_node->key = key;
     new_node->height = 0;
 
     return new_node;
@@ -163,12 +163,12 @@ void insert(node** root, int k)
 
     while(q != NULL)
     {
-        if (k == q->data){
-            printf("node with data %d already exists\n", k);
+        if (k == q->key){
+            printf("node with key %d already exists\n", k);
             return;
         }
         parent = q;
-        if (q->data < k)
+        if (q->key < k)
             q = q->rc;
         else
             q = q->lc;
@@ -179,7 +179,7 @@ void insert(node** root, int k)
     //if the node is not the root.
     if (parent != NULL)
     {
-        if(parent->data < k)
+        if(parent->key < k)
             parent->rc = new_node;
         else
             parent->lc = new_node;
@@ -194,6 +194,60 @@ void insert(node** root, int k)
 
     print_tree(*root, get_height(*root));
     printf("\n--------------------------------------------\n");
+}
+
+//helper to replace the link between q and q->parent with child and q->parent.
+void replace_in_parent(node* q, node* child) {
+    if (q->parent) {
+        if (q->parent->lc == q)
+            q->parent->lc = child;
+        else
+            q->parent->rc = child;
+    }
+    if (child)
+        child->parent = q->parent;
+}
+
+// Find the minimum node starting from a given root.
+node* find_min(node* root) {
+    while (root && root->lc)
+        root = root->lc;
+    return root;
+}
+
+void delete(node** root, int key)
+{
+    node* parent = NULL;
+    node* q = *root;
+
+    while(q != NULL)
+    {
+        if (key == q->key){
+            if(q->lc == NULL && q->rc == NULL){                     // 0 children
+                replace_in_parent(q, NULL); // remove q.
+                free(q);
+            }
+            else if (q->lc != NULL && q->rc != NULL){               // 2 children
+                /*since this case has 2 children,
+                inOrder successor is guaranted to be in q->rc.*/
+                node* successor = find_min(q->rc);
+                q->key = successor->key;
+                delete(&(q->rc), successor->key);
+            }
+            else{                                                   // 1 child
+                node* child = (q->lc) ? q->lc : q->rc;
+                replace_in_parent(q, child);
+                free(q);
+            }
+            *root = balance_tree(parent);
+            return;
+        }
+        parent = q;
+        if (q->key < key)
+            q = q->rc;
+        else
+            q = q->lc;
+    }
 }
 
 int main()
