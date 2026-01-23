@@ -4,7 +4,10 @@ SUBDIRS := $(dir $(SUBDIRS))
 .PHONY: all run clean $(SUBDIRS)
 
 # Build everything by default
-all: $(SUBDIRS)
+all: $(SUBDIRS) finish_msg
+
+finish_msg:
+	@echo All processes finished.
 
 # Default build rule for subdirs
 $(SUBDIRS):

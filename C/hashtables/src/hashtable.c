@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <stdarg.h> //library to allow variadic functions (variable number of parameters).
 
 #define  TABLE_SIZE 10
 #define MAX_NAME 25
@@ -74,8 +73,9 @@ void print_student_simple(student*st)
     printf("%s ", st->name);
 }
 
-//takes as parameters a hashtable and a string to specify printing mode.
-//to print each student in detail the second argument should be "detail". Otherwise the default mode will be used.
+/*takes as parameters a hashtable and a string to specify printing mode.
+to print each student in detail the second argument should be "detail". Otherwise the default mode will be used.
+*/
 void print_table(student* table[], const char* mode)
 {
     printf("START\n");
