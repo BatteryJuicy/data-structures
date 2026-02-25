@@ -1,5 +1,7 @@
 .vscode
 *.exe
 *.o
+*.out
 */out
 */build
+.DS_Store
